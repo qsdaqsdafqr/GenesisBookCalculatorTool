@@ -5664,7 +5664,7 @@ function update_all() {
             : 'javascript: selectM("' + item.id + '","' + item.m[j].name + '")',
         name: item.m[j].name,
         title: "设备速度:" + item.m[j].speed.toFixed(pointLength),
-        showName: item.m[j].name.replace("制造台", ""),
+        showName: item.m[j].name,
       };
       if (m.showName == "采矿机") {
         m.title += " 采矿机按6个矿脉计算(因所限传送带速度最高30)";

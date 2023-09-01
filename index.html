@@ -58,18 +58,53 @@
 		</button>
 		<!--<input type="checkbox" id="isMerge" checked />合并同配方多产物-->
 		<input type="checkbox" id="hideSource" /><label for="hideSource">隐藏原料</label>
+		<input type="checkbox" id="selfAcc" checked /><label for="selfAcc">自喷涂增产剂</label>
+		<input type="checkbox" id="chemicalDoubl" /><label for="chemicalDoubl">化工技术革新（科技翻倍）</label>
+		<label for="selore">采矿作业速度：</label>
+		<input type="text" class="textbox" id="selore" value="100" style="width:40px;" />%
+		<input type="checkbox" id="showMaxOneBelt" /><label for="showMaxOneBelt">1条传送带最高支持设备数量</label>
+		<br>
 		<select id="selmodein">
 			<option value="制作台">制作台</option>
 			<option value="天穹装配厂">天穹装配厂</option>
+		</select>
+		<select id="circuitEtching">
+			<option value="电路蚀刻机">电路蚀刻机</option>
+			<option value="精密结构组装厂">精密结构组装厂</option>
+		</select>
+		<select id="highPrecision">
+			<option value="高精度装配线">高精度装配线</option>
+			<option value="精密结构组装厂">精密结构组装厂</option>
 		</select>
 		<select id="furnace">
 			<option value="电弧熔炉">电弧熔炉</option>
 			<option value="位面熔炉">位面熔炉</option>
 			<option value="物质裂解塔">物质裂解塔</option>
 		</select>
+		<select id="mineralProcess">
+			<option value="矿物处理厂">矿物处理厂</option>
+			<option value="物质裂解塔">物质裂解塔</option>
+		</select>
+		<select id="pump">
+			<option value="抽水机">抽水机</option>
+			<option value="聚束液体汲取设施">聚束液体汲取设施</option>
+		</select>
+		<br>
+		<select id="refin">
+			<option value="精炼厂">精炼厂</option>
+			<option value="巨型化学反应釜">巨型化学反应釜</option>
+		</select>
 		<select id="chemical">
 			<option value="化工厂">化工厂</option>
 			<option value="巨型化学反应釜">巨型化学反应釜</option>
+		</select>
+		<select id="advancchemical">
+			<option value="先进化学反应釜">先进化学反应釜</option>
+			<option value="巨型化学反应釜">巨型化学反应釜</option>
+		</select>
+		<select id="accelerator">
+			<option value="微型粒子对撞机">微型粒子对撞机</option>
+			<option value="巨型粒子对撞机">巨型粒子对撞机</option>
 		</select>
 		<select id="accType">
 			<option value="增产剂">增产剂</option>
@@ -79,12 +114,6 @@
 			<option value="加速">加速</option>
 			<option value="增产">增产</option>
 		</select>
-		<input type="checkbox" id="selfAcc" checked /><label for="selfAcc">自喷涂增产剂</label>
-		</br>
-		<label for="selore">采矿作业速度：</label>
-		<input type="text" class="textbox" id="selore" value="100" style="width:40px;" />%
-		<input type="checkbox" id="showMaxOneBelt" /><label for="showMaxOneBelt">1条传送带最高支持设备数量</label>
-
 		<span id="projectdiv" style="display:none;">
 			<select id="selprojects"></select>
 			<button id="btnLoadProject">
