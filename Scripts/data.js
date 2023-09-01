@@ -4418,8 +4418,9 @@ function f_initData() {
     // console.log(data);
 }
 var pointLength = 1;
-var settingsLocal = {}; //不存储cookie
+var settingsLocal = {};
 var settings = {};
+var config = {};
 function saveData(key, value) {
     if (window.localStorage) {
         localStorage.setItem(key, value);
@@ -4437,11 +4438,18 @@ function getData(key) {
 function saveConfig() {
     saveData("machine_config" + version, JSON.stringify(config));
 }
-function loadConfig() {
+function loadConfig() {    
     var json = getData("machine_config" + version);
     if (json) {
         eval("config = " + json);
     }
+    for (let key in config) {
+        if (config.hasOwnProperty(key)) {
+          let value = config[key];
+          let id = $("#"+key);
+            id.val(value);
+        }
+    }  
 }
 function saveSetting() {
     saveData("machine_settings" + version, JSON.stringify(settings));
@@ -4494,18 +4502,6 @@ function getMachine(arg) {
 
     return item.m[0].name;
 }
-// 获取配方默认的增产剂等级
-function getAccType(arg) {
-    var item = typeof arg == "string" ? find(arg) : arg;
-    if (!item) return null;
-    var accType = (settings[item.id] || {}).accType || null;
-    if (accType != null) return accType;
-
-    accType = (settingsLocal[item.id] || {}).accType || null;
-    if (accType != null) return accType;
-
-    return null;
-}
 // 获取配方默认的增产剂效果
 function getAccValue(arg) {
     var item = typeof arg == "string" ? find(arg) : arg;
@@ -4523,7 +4519,7 @@ function getValue(arg) {
     var item = typeof arg == "string" ? find(arg) : arg;
     if (!item) return null;
     var machine = getMachine(item);
-    var accType = getAccType(item),
+    var accType = null,
         accValue = getAccValue(item);
     //   var speed = settings_time[machine];
 
@@ -4870,6 +4866,7 @@ function f_init() {
     });
     f_initData();
     f_fillData();
+    loadConfig()
     doSpeed1();
     update_all();
     loadSetting();
@@ -4894,8 +4891,59 @@ function f_init() {
     $("#btnAdd3").click(function () {
         f_add3($("#seldata").val());
     });
+    $("#btnReset1").click(function () {
+        let defaultconfig = {
+            "speed1_1": "1",
+            "speed1_2": "0.02",
+            "speed1_3": "0.02",
+            "speed2_1": "0.5",
+            "speed2_2": "0.5",
+            "speed2_3": "0.15",
+            "speed3_1": "0.5",
+            "speed3_2": "0.5",
+            "speed3_3": "0.5",
+            "speed3_4": "0.5",
+            "selore": "100",
+            "speed1_7": "1",
+            "speed1_8": "100",
+            "oilSpeed": "4",
+            "pointLength": 1
+        };
+        for (let key in defaultconfig) {
+            if (defaultconfig.hasOwnProperty(key)) {
+              let value = defaultconfig[key];
+              let id = $("#"+key);
+                id.val(value);
+                console.log(delete config[key]);
+            }
+        }
+        saveConfig();
+        update_all();
+    });
     $("#btnReset2").click(function () {
+        let defaultconfig = {
+            "selmodein": "制作台",
+            "circuitEtching": "电路蚀刻机",
+            "highPrecision": "高精度装配线",
+            "furnace": "电弧熔炉",
+            "mineralProcess": "矿物处理厂",
+            "pump": "抽水机",
+            "refin": "精炼厂",
+            "chemical": "化工厂",
+            "advancchemical": "先进化学反应釜",
+            "accelerator": "微型粒子对撞机",
+            "accValue": "无",
+        };
+        for (let key in defaultconfig) {
+            if (defaultconfig.hasOwnProperty(key)) {
+              let value = defaultconfig[key];
+              let id = $("#"+key);
+                id.val(value);
+                delete config[key];
+            }
+        }
         settings = {};
+        saveConfig();
         saveSetting();
         update_all();
     });
@@ -4905,6 +4953,11 @@ function f_init() {
     //     saveSettingTime();
     //     update_all();
     //   });
+    $("#speed1_7").change(function () {
+        config["speed1_7"] = $("#speed1_7").val();
+        saveConfig();
+        update_all();
+    });
     $("#speed1_8").change(function () {
         $(data).each(function () {
             if (this.m) {
@@ -4921,7 +4974,8 @@ function f_init() {
                 }
             }
         });
-        doSpeed1();
+        config["speed1_8"] = $("#speed1_8").val();
+        saveConfig();
         update_all();
     });
     $("#selore").change(function () {
@@ -4970,6 +5024,8 @@ function f_init() {
                 }
             }
         });
+        config["selore"] = $("#selore").val();
+        saveConfig();
         doSpeed1();
         update_all();
     });
@@ -4981,6 +5037,8 @@ function f_init() {
     });
     $("#pointLength").change(function () {
         pointLength = parseInt($(this).val());
+        config["pointLength"] = pointLength;
+        saveConfig();
         update_all();
     });
     //   $("#fractionatorSpeed").change(function () {
@@ -5009,6 +5067,8 @@ function f_init() {
                 }
             }
         });
+        config["oilSpeed"] = $("#oilSpeed").val();
+        saveConfig();
         update_all();
     });
     //   $("#gzSpeed").change(function () {
@@ -5044,7 +5104,28 @@ function f_init() {
   氢气=132-87.9=44.1*/
 
     function doSpeed1() {
+        var speed1_1 = parseFloat($("#speed1_1").val()); //氢(气态)
+        var speed1_2 = parseFloat($("#speed1_2").val()); //重氢
+        var speed1_3 = parseFloat($("#speed1_3").val()); //氦
+        var speed2_1 = parseFloat($("#speed2_1").val()); //氢(巨冰)
+        var speed2_2 = parseFloat($("#speed2_2").val()); //可燃冰
+        var speed2_3 = parseFloat($("#speed2_3").val()); //氨
+        var speed3_1 = parseFloat($("#speed3_1").val()); //氮
+        var speed3_2 = parseFloat($("#speed3_2").val()); //氧
+        var speed3_3 = parseFloat($("#speed3_3").val()); //一氧化碳
+        var speed3_4 = parseFloat($("#speed3_4").val()); //二氧化碳
         var ore = parseFloat($("#selore").val());
+        config["speed1_1"] = $("#speed1_1").val();
+        config["speed1_2"] = $("#speed1_2").val();
+        config["speed1_3"] = $("#speed1_3").val();
+        config["speed2_1"] = $("#speed2_1").val();
+        config["speed2_2"] = $("#speed2_2").val();
+        config["speed2_3"] = $("#speed2_3").val();
+        config["speed3_1"] = $("#speed3_1").val();
+        config["speed3_2"] = $("#speed3_2").val();
+        config["speed3_3"] = $("#speed3_3").val();
+        config["speed3_4"] = $("#speed3_4").val();
+        saveConfig();
         function getSum(value1, value2, value3, p1, p2, p3) {
             var sum = 0;
             sum = value1 * 0.01 * ore * 8;
@@ -5061,16 +5142,6 @@ function f_init() {
                 ].includes(this.s[0].name)
             ) {
                 if (this.m) {
-                    var speed1_1 = parseFloat($("#speed1_1").val()); //氢(气态)
-                    var speed1_2 = parseFloat($("#speed1_2").val()); //重氢
-                    var speed1_3 = parseFloat($("#speed1_3").val()); //氦
-                    var speed2_1 = parseFloat($("#speed2_1").val()); //氢(巨冰)
-                    var speed2_2 = parseFloat($("#speed2_2").val()); //可燃冰
-                    var speed2_3 = parseFloat($("#speed2_3").val()); //氨
-                    var speed3_1 = parseFloat($("#speed3_1").val()); //氮
-                    var speed3_2 = parseFloat($("#speed3_2").val()); //氧
-                    var speed3_3 = parseFloat($("#speed3_3").val()); //一氧化碳
-                    var speed3_4 = parseFloat($("#speed3_4").val()); //二氧化碳
                     for (var i = 0; i < this.m.length; i++) {
                         if (this.m[i].name == "轨道采集器(气态)") {
                             if (this.s[0].name == "氢") {
@@ -5150,6 +5221,8 @@ function f_init() {
                 settingsLocal[this.id].m = value;
             }
         });
+        config["selmodein"] = $("#selmodein").val();
+        saveConfig();
         saveSetting();
         update_all();
     });
@@ -5161,6 +5234,8 @@ function f_init() {
                 settingsLocal[this.id].m = value;
             }
         });
+        config["circuitEtching"] = $("#circuitEtching").val();
+        saveConfig();
         saveSetting();
         update_all();
     });
@@ -5172,6 +5247,8 @@ function f_init() {
                 settingsLocal[this.id].m = value;
             }
         });
+        config["highPrecision"] = $("#highPrecision").val();
+        saveConfig();
         saveSetting();
         update_all();
     });
@@ -5183,6 +5260,8 @@ function f_init() {
                 settingsLocal[this.id].m = value;
             }
         });
+        config["furnace"] = $("#furnace").val();
+        saveConfig();
         saveSetting();
         update_all();
     });
@@ -5194,6 +5273,8 @@ function f_init() {
                 settingsLocal[this.id].m = value;
             }
         });
+        config["mineralProcess"] = $("#mineralProcess").val();
+        saveConfig();
         saveSetting();
         update_all();
     });
@@ -5205,6 +5286,21 @@ function f_init() {
                 settingsLocal[this.id].m = value;
             }
         });
+        config["pump"] = $("#pump").val();
+        saveConfig();
+        saveSetting();
+        update_all();
+    });
+    $("#refin").change(function () {
+        var value = $("#refin").val();
+        $(data).each(function () {
+            if (this.mName == "精炼设备") {
+                settingsLocal[this.id] = settingsLocal[this.id] || {};
+                settingsLocal[this.id].m = value;
+            }
+        });
+        config["refin"] = $("#refin").val();
+        saveConfig();
         saveSetting();
         update_all();
     });
@@ -5216,6 +5312,8 @@ function f_init() {
                 settingsLocal[this.id].m = value;
             }
         });
+        config["chemical"] = $("#chemical").val();
+        saveConfig();
         saveSetting();
         update_all();
     });
@@ -5227,6 +5325,8 @@ function f_init() {
                 settingsLocal[this.id].m = value;
             }
         });
+        config["advancchemical"] = $("#advancchemical").val();
+        saveConfig();
         saveSetting();
         update_all();
     });
@@ -5238,6 +5338,8 @@ function f_init() {
                 settingsLocal[this.id].m = value;
             }
         });
+        config["accelerator"] = $("#accelerator").val();
+        saveConfig();
         saveSetting();
         update_all();
     });
@@ -5265,6 +5367,8 @@ function f_init() {
             settingsLocal[this.id] = settingsLocal[this.id] || {};
             settingsLocal[this.id].accValue = defaultAccValue;
         });
+        config["accValue"] = $("#accValue").val();
+        saveConfig();
         saveSetting();
         update_all();
     });
@@ -5752,8 +5856,8 @@ function update_all() {
             };
             outitem.pf.push(pf);
         }
-        console.log("item: " + item);
-        console.log("info: " + info);
+        // console.log("item: " + item);
+        // console.log("info: " + info);
         for (var j = 0; j < item.m.length; j++) {
             var m = {
                 class: info.name == item.m[j].name ? "m selected" : "m",

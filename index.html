@@ -49,6 +49,9 @@
 	</button>
 
 	<div style="margin-top:5px;">
+		<button id="btnReset1">
+			重置参数
+		</button>
 		<button id="btnReset2">
 			重置设备
 		</button>
@@ -383,7 +386,6 @@
 					jQuery.each(includes, function () {
 						var file = 'quote/' + $(this).data('include') + '.html';
 						$(this).load(file);
-						console.log(file);
 					});
 				});
 			</script>
