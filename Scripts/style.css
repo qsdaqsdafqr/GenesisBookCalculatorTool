@@ -58,6 +58,11 @@
     height: 80px;
 }
 
+.minspeed {
+    color: red;
+    font-weight: bold;
+}
+
 .layui-layer-page .layui-layer-content {
     overflow: hidden;
 }
@@ -116,7 +121,7 @@
 
 .m {
     text-decoration: underline;
-    max-width: 90px;
+    /* max-width: 90px; */
     white-space: nowrap;
     display: flex;
     align-items: flex-end;

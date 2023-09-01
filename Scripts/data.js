@@ -181,14 +181,6 @@ var data = [
     noExtra: true,
   }, {
     s: [{
-        name: "氨"
-    }],
-    group: "原料",
-    m: "轨道采集器3",
-    q: [],
-    t: 1,
-  }, {
-    s: [{
         name: "氮"
     }],
     group: "原料",
@@ -228,7 +220,7 @@ var data = [
         name: "水"
     }],
     q: [],
-    m: "抽水机",
+    m: "抽水设施",
     t: 1,
   }, {
     s: [{
@@ -236,7 +228,7 @@ var data = [
         n: 1
     }],
     group: "原料",
-    m: "抽水机",
+    m: "抽水设施",
     q: [],
     t: 1,
   }, {
@@ -244,7 +236,7 @@ var data = [
         name: "剧毒液体",
         n: 1
     }],
-    m: "抽水机",
+    m: "抽水设施",
     q: [],
     t: 1,
   }, {
@@ -253,7 +245,7 @@ var data = [
         n: 1
     }],
     group: "原料",
-    m: "抽水机",
+    m: "抽水设施",
     q: [],
     t: 1,
   }, {
@@ -1069,7 +1061,7 @@ var data = [
       group: "建筑",
   }, {
       s: [{
-          name:"抽水站",
+          name:"抽水机",
           n: 1
       }, ],
       q: [{
@@ -4137,7 +4129,7 @@ var data = [
       group: "建筑",
   }, {
       s: [{
-          name:"大抽水机",
+          name:"聚束液体汲取设施",
           n: 1
       }, ],
       q: [{
@@ -4319,6 +4311,7 @@ var spaceData = {}; //占用格子
 var defaultAccType = "增产剂";
 var defaultAccValue = "无";
 var version = "081";
+var chemicalDouble = 1;
 
 function f_initData() {
   $(data).each(function (i, item) {
@@ -4373,25 +4366,25 @@ function f_initData() {
       ms = [{ name: "能量枢纽", speed: 1 }];
     }
     if (item.m == "原油萃取站") {
-      ms = [{ name: "原油萃取站", speed: 1 }];
+      ms = [{ name: "原油萃取站", speed: 2 }];
     }
-    if (item.m == "抽水机") {
+    if (item.m == "抽水设施") {
       ms = [{ name: "抽水机", speed: 100 }];
       ms = [{ name: "聚束液体汲取设施", speed: 500 }];
     }
     if (item.m == "精炼设备") {
-      ms = [{ name: "精炼厂", speed: 4 }];
+      ms = [{ name: "精炼厂", speed: 2 + 2*chemicalDouble }];
       ms = [{ name: "巨型化学反应釜", speed: 40 }];
     }
     if (item.m == "化工设备") {
       ms = [
-        { name: "化工厂", speed: 4 },
+        { name: "化工厂", speed: 2 + 2*chemicalDouble },
         { name: "巨型化学反应釜", speed: 40 },
       ];
     }
     if (item.m == "先进化学反应釜") {
       ms = [
-        { name: "先进化学反应釜", speed: 4 },
+        { name: "先进化学反应釜", speed: 2 + 2*chemicalDouble },
         { name: "巨型化学反应釜", speed: 40 },
       ];
     }
@@ -4880,6 +4873,19 @@ function f_init() {
   loadSettingProjects();
 
   projectsUpdate();
+  $("#chemicalDoubl").change(function () {
+    chemicalDouble = !chemicalDouble;
+    $(data).each(function () {
+        if (this.m) {
+          for (var i = 0; i < this.m.length; i++) {
+            if (["精炼厂","化工厂","先进化学反应釜"].includes(this.m[i].name)) {
+              this.m[i].speed = 2 + 2*chemicalDouble;
+            }
+          }
+        }
+      });
+    update_all();
+  })
   $("#btnAdd3").click(function () {
     f_add3($("#seldata").val());
   });
@@ -4919,29 +4925,41 @@ function f_init() {
         for (var i = 0; i < this.m.length; i++) {
           if (this.m[i].name == "矿脉") {
             this.m[i].speed = Math.min(
-              0.5 * 1 * 0.01 * parseFloat($("#selore").val()),
-              30
+                1 * 0.01 * parseFloat($("#selore").val()),
+                240
             );
           }
           if (this.m[i].name == "采矿机") {
             this.m[i].speed = Math.min(
-              0.5 * 6 * 0.01 * parseFloat($("#selore").val()),
-              30
+                6 * 0.01 * parseFloat($("#selore").val()),
+                240
             );
           }
           if (this.m[i].name == "大型采矿机") {
             this.m[i].speed =
-              1 *
-              20 *
-              0.01 *
-              parseFloat($("#selore").val()) *
-              0.01 *
-              parseFloat($("#speed1_8").val());
+                2 *
+                20 *
+                0.01 *
+                parseFloat($("#selore").val()) *
+                0.01 *
+                parseFloat($("#speed1_8").val());
           }
           if (this.m[i].name == "抽水机") {
             this.m[i].speed = Math.min(
-              (50 * 0.01 * parseFloat($("#selore").val())) / 60,
-              30
+                (50 * 0.01 * parseFloat($("#selore").val())) / 60,
+                240
+            );
+          }
+          if (this.m[i].name == "聚束液体汲取设施") {
+            this.m[i].speed = Math.min(
+                (50 * 0.01 * parseFloat($("#selore").val())) / 60,
+                240
+            );
+          }
+          if (this.m[i].name == "原油萃取站") {
+            this.m[i].speed = Math.min(
+                (2 * 0.01 * (parseFloat($("#oilSpeed").val()) * parseFloat($("#selore").val()))) / 60,
+                240
             );
           }
         }
@@ -4978,7 +4996,10 @@ function f_init() {
       if (this.m) {
         for (var i = 0; i < this.m.length; i++) {
           if (this.m[i].name == "原油萃取站") {
-            this.m[i].speed = parseFloat($("#oilSpeed").val());
+            this.m[i].speed = Math.min(
+                (2 * (parseFloat($("#oilSpeed").val()) * parseFloat($("#selore").val()))) / 60,
+                240
+            );
           }
         }
       }
@@ -5018,19 +5039,12 @@ function f_init() {
 氢气=132-87.9=44.1*/
 
   function doSpeed1() {
-    var speed1_1 = parseFloat($("#speed1_1").val()); //氢(气态)
-    var speed1_2 = parseFloat($("#speed1_2").val()); //重氢
-    var speed1_3 = parseFloat($("#speed1_3").val()); //氦
-    var speed1_4 = parseFloat($("#speed1_4").val()); //可燃冰
-    var speed1_5 = parseFloat($("#speed1_5").val()); //氢(巨冰)
-    var speed1_6 = parseFloat($("#speed1_6").val()); //氨
     var ore = parseFloat($("#selore").val());
-
     function getSum(value1, value2, value3, p1, p2, p3) {
       var sum = 0;
-      sum = 60 * value1 * 0.01 * ore * 8;
+      sum = value1 * 0.01 * ore * 8;
       var per = (value1 * p1) / (value1 * p1 + value2 * p2 + value3 * p3);
-      sum -= (60 * 30 * per) / p1;
+      sum -= (30 * per) / p1;
 
       return sum;
     }
@@ -5041,35 +5055,60 @@ function f_init() {
           this.s[0].name == "重氢" ||
           this.s[0].name == "氦" ||
           this.s[0].name == "可燃冰" ||
-          this.s[0].name == "氨")
+          this.s[0].name == "氨"||
+          this.s[0].name == "氮"||
+          this.s[0].name == "氧"||
+          this.s[0].name == "一氧化碳"||
+          this.s[0].name == "二氧化碳")
       ) {
         if (this.m) {
-          for (var i = 0; i < this.m.length; i++) {
-            if (this.m[i].name == "轨道采集器(气态)") {
-              if (this.s[0].name == "氢") {
-                this.t = 1 / (getSum(speed1_1, speed1_2, speed1_3, 9, 400, 0) / 60);
-                //console.log("T1:" + 60/this.t);
-              } else if (this.s[0].name == "重氢") {
-                this.t = 1 / (getSum(speed1_2, speed1_1, speed1_3, 400, 9, 0) / 60);
-                //console.log("T2:" + 60/this.t);
-              } else if(this.s[0].name == "氦") {
-                this.t = 1 / ((60 * speed1_3 * 0.01 * ore * 8) / 60);
-                //console.log("T3:" + 60/this.t);
-              }
+            var speed1_1 = parseFloat($("#speed1_1").val()); //氢(气态)
+            var speed1_2 = parseFloat($("#speed1_2").val()); //重氢
+            var speed1_3 = parseFloat($("#speed1_3").val()); //氦
+            var speed2_1 = parseFloat($("#speed2_1").val()); //氢(巨冰)
+            var speed2_2 = parseFloat($("#speed2_2").val()); //可燃冰
+            var speed2_3 = parseFloat($("#speed2_3").val()); //氨
+            var speed3_1 = parseFloat($("#speed3_1").val()); //氮
+            var speed3_2 = parseFloat($("#speed3_2").val()); //氧
+            var speed3_3 = parseFloat($("#speed3_3").val()); //一氧化碳
+            var speed3_4 = parseFloat($("#speed3_4").val()); //二氧化碳
+            for (var i = 0; i < this.m.length; i++) {
+                if (this.m[i].name == "轨道采集器(气态)") {
+                    if (this.s[0].name == "氢") {
+                        this.t = 1 / getSum(speed1_1, speed1_2, speed1_3, 9, 400, 0);
+                        //console.log("T1:" + 60/this.t);
+                    } else if (this.s[0].name == "重氢") {
+                        this.t = 1 / getSum(speed1_2, speed1_1, speed1_3, 400, 9, 0);
+                        //console.log("T2:" + 60/this.t);
+                    } else if(this.s[0].name == "氦") {
+                        this.t = 1 / (speed1_3 * 0.01 * ore * 8);
+                        //console.log("T3:" + 60/this.t);
+                    }
+                }
+                if (this.m[i].name == "轨道采集器(巨冰)") {
+                    if (this.s[0].name == "氢") {
+                        this.t = 1 / getSum(speed2_1, speed2_2, speed2_3, 9, 4.8, 6);
+                        //console.log("T4:" + 60/this.t);
+                    } else if (this.s[0].name == "可燃冰") {
+                        this.t = 1 / getSum(speed2_2, speed2_1, speed2_3, 4.8, 9, 6);
+                        //console.log("T5:" + 60/this.t);
+                    } else if (this.s[0].name == "氨") {
+                        this.t = 1 / getSum(speed2_3, speed2_2, speed2_1, 6, 4.8, 9);
+                        //console.log("T6:" + 60/this.t);
+                    }
+                }
+                if (this.m[i].name == "大气采集站") {
+                    if (this.s[0].name == "氮") {
+                        this.t = 1 / (speed3_1);
+                    }else if (this.s[0].name == "氧") {
+                        this.t = 1 / (speed3_2);
+                    } else if (this.s[0].name == "一氧化碳") {
+                        this.t = 1 / (speed3_3);
+                    } else if (this.s[0].name == "二氧化碳") {
+                        this.t = 1 / (speed3_4);
+                    }
+                }
             }
-            if (this.m[i].name == "轨道采集器(巨冰)") {
-              if (this.s[0].name == "氢") {
-                this.t = 1 / (getSum(speed1_5, speed1_4, speed1_6, 9, 4.8, 6) / 60);
-                //console.log("T4:" + 60/this.t);
-              } else if (this.s[0].name == "可燃冰") {
-                this.t = 1 / (getSum(speed1_4, speed1_5, speed1_6, 4.8, 9, 6) / 60);
-                //console.log("T5:" + 60/this.t);
-              } else if (this.s[0].name == "氨") {
-                this.t = 1 / (getSum(speed1_6, speed1_4, speed1_5, 6, 4.8, 9) / 60);
-                //console.log("T6:" + 60/this.t);
-              }
-            }
-          }
         }
       }
     });
@@ -5108,12 +5147,32 @@ function f_init() {
     var value = $("#selmodein").val();
     $(data).each(function () {
       if (this.mName == "制造台") {
-        // TODO: 下面的初始化代码还能优化一下
         settingsLocal[this.id] = settingsLocal[this.id] || {};
         settingsLocal[this.id].m = value;
       }
     });
-
+    saveSetting();
+    update_all();
+  });
+  $("#circuitEtching").change(function () {
+    var value = $("#circuitEtching").val();
+    $(data).each(function () {
+      if (this.mName == "电路蚀刻机") {
+        settingsLocal[this.id] = settingsLocal[this.id] || {};
+        settingsLocal[this.id].m = value;
+      }
+    });
+    saveSetting();
+    update_all();
+  });
+  $("#highPrecision").change(function () {
+    var value = $("#highPrecision").val();
+    $(data).each(function () {
+      if (this.mName == "高精度装配线") {
+        settingsLocal[this.id] = settingsLocal[this.id] || {};
+        settingsLocal[this.id].m = value;
+      }
+    });
     saveSetting();
     update_all();
   });
@@ -5121,12 +5180,32 @@ function f_init() {
     var value = $("#furnace").val();
     $(data).each(function () {
       if (this.mName == "冶炼设备") {
-        // TODO: 下面的初始化代码还能优化一下
         settingsLocal[this.id] = settingsLocal[this.id] || {};
         settingsLocal[this.id].m = value;
       }
     });
-
+    saveSetting();
+    update_all();
+  });
+  $("#mineralProcess").change(function () {
+    var value = $("#mineralProcess").val();
+    $(data).each(function () {
+      if (this.mName == "矿物处理厂") {
+        settingsLocal[this.id] = settingsLocal[this.id] || {};
+        settingsLocal[this.id].m = value;
+      }
+    });
+    saveSetting();
+    update_all();
+  });
+  $("#pump").change(function () {
+    var value = $("#pump").val();
+    $(data).each(function () {
+      if (this.mName == "抽水设施") {
+        settingsLocal[this.id] = settingsLocal[this.id] || {};
+        settingsLocal[this.id].m = value;
+      }
+    });
     saveSetting();
     update_all();
   });
@@ -5134,29 +5213,49 @@ function f_init() {
     var value = $("#chemical").val();
     $(data).each(function () {
       if (this.mName == "化工设备") {
-        // TODO: 下面的初始化代码还能优化一下
         settingsLocal[this.id] = settingsLocal[this.id] || {};
         settingsLocal[this.id].m = value;
       }
     });
-
     saveSetting();
     update_all();
   });
-  $("#accType").change(function () {
-    defaultAccType = $("#accType").val();
-    // 不知道为啥要写这个for
-    for (var i in settings) {
-      delete settings[i].accType;
-    }
+  $("#advancchemical").change(function () {
+    var value = $("#advancchemical").val();
     $(data).each(function () {
-      // TODO: 下面的初始化代码还能优化一下
-      settingsLocal[this.id] = settingsLocal[this.id] || {};
-      settingsLocal[this.id].accType = defaultAccType;
+      if (this.mName == "先进化学反应釜") {
+        settingsLocal[this.id] = settingsLocal[this.id] || {};
+        settingsLocal[this.id].m = value;
+      }
     });
     saveSetting();
     update_all();
   });
+  $("#accelerator").change(function () {
+    var value = $("#accelerator").val();
+    $(data).each(function () {
+      if (this.mName == "微型粒子对撞机") {
+        settingsLocal[this.id] = settingsLocal[this.id] || {};
+        settingsLocal[this.id].m = value;
+      }
+    });
+    saveSetting();
+    update_all();
+  });
+//   $("#accType").change(function () {
+//     defaultAccType = $("#accType").val();
+//     // 不知道为啥要写这个for
+//     for (var i in settings) {
+//       delete settings[i].accType;
+//     }
+//     $(data).each(function () {
+//       // TODO: 下面的初始化代码还能优化一下
+//       settingsLocal[this.id] = settingsLocal[this.id] || {};
+//       settingsLocal[this.id].accType = defaultAccType;
+//     });
+//     saveSetting();
+//     update_all();
+//   });
   $("#accValue").change(function () {
     defaultAccValue = $("#accValue").val();
     for (var i in settings) {
@@ -5471,7 +5570,7 @@ function checkResult() {
   }
 }
 function update_all() {
-  var outResult = [];
+  //var outResult = [];
   xh_list = [];
   out_list = [];
   single_list = [];
