@@ -4369,12 +4369,16 @@ function f_initData() {
       ms = [{ name: "原油萃取站", speed: 2 }];
     }
     if (item.m == "抽水设施") {
-      ms = [{ name: "抽水机", speed: 100 }];
-      ms = [{ name: "聚束液体汲取设施", speed: 500 }];
+      ms = [
+        { name: "抽水机", speed: 100 },
+        { name: "聚束液体汲取设施", speed: 500 },
+      ];
     }
     if (item.m == "精炼设备") {
-      ms = [{ name: "精炼厂", speed: 2 + 2*chemicalDouble }];
-      ms = [{ name: "巨型化学反应釜", speed: 40 }];
+      ms = [
+        { name: "精炼厂", speed: 2 + 2*chemicalDouble },
+        { name: "巨型化学反应釜", speed: 40 },
+      ];
     }
     if (item.m == "化工设备") {
       ms = [
@@ -4389,8 +4393,10 @@ function f_initData() {
       ];
     }
     if (item.m == "粒子对撞机") {
-      ms = [{ name: "微型粒子对撞机", speed: 4 }];
-      ms = [{ name: "巨型粒子对撞机", speed: 40 }];
+      ms = [
+        { name: "微型粒子对撞机", speed: 4 },
+        { name: "巨型粒子对撞机", speed: 40 }
+      ];
     }
     if (item.m == "紧凑式回旋加速器") {
       ms = [{ name: "紧凑式回旋加速器", speed: 0.1 }];
@@ -5753,6 +5759,8 @@ function update_all() {
       };
       outitem.pf.push(pf);
     }
+    console.log("item: "+item);
+    console.log("info: "+info);
     for (var j = 0; j < item.m.length; j++) {
       var m = {
         class: info.name == item.m[j].name ? "m selected" : "m",
