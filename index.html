@@ -33,42 +33,22 @@
 
 <body style="padding:5px;">
 	每分钟数量：<input type="text" id="txtnumber" value="60" />
-	或者： <select id="selmaince">
-		<option value="">选择设备数量</option>
+	或者： <select id="selmaince"> <option value="">选择设备数量</option>
 	</select>
-	<a href="javascript:f_add()" style="margin-left:10px;margin-right:10px;"><img
-			src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAZVJREFUWEftl89VwkAQh3+DBRjTgHpYrtKBdCB0gEfDRSsQK5AL8YgdiB1gB3gll1CAMRTgjm9XCZslIf7Je8khe0y+N5m3mfl2h1Dxooq/jyQB5yHothhPAJx0UhxKRj8ethfquTNZdlqkODqxko8loR9fibnmdDyeFnFJAq4fxAAOs3aEgJc3T3TVO9cPQgDHOTsXR544KuY4jLz2qeLMBHjf74g8oVnXD0rlmgRqtQO5xcWM5/eh6H3XgOqGs5x6WUWe0N1RUKwJt23DybJzQDRm4NwMrj7O4JHZhgQaEeHC5FSnfDBfm1xWPJurj4iqMmLqF+QYbiGZL9MmpCmATrExizmzC8oowsaE+K2yayWiUg+Znx5aZRfhOvKEvk/8yYQtokdbs1mGy+IAvErmgdWuO/FsrjFhyoREdE+AvnptFgMzZr5LHUZEtwTo09FYO8bMiTdn5ptNvJKLcHvXc/1gz7Hd3AmRGLMxYdmDyT9M+DWaKXPZU89KMvcsw80yuLUk9JLRTI9wlMWtJGGw4RoTfgKyI5kwSL6MMgAAAABJRU5ErkJggg==" /></a>
+		<a href="javascript:f_add()" style="margin-left:10px;margin-right:10px;"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAZVJREFUWEftl89VwkAQh3+DBRjTgHpYrtKBdCB0gEfDRSsQK5AL8YgdiB1gB3gll1CAMRTgjm9XCZslIf7Je8khe0y+N5m3mfl2h1Dxooq/jyQB5yHothhPAJx0UhxKRj8ethfquTNZdlqkODqxko8loR9fibnmdDyeFnFJAq4fxAAOs3aEgJc3T3TVO9cPQgDHOTsXR544KuY4jLz2qeLMBHjf74g8oVnXD0rlmgRqtQO5xcWM5/eh6H3XgOqGs5x6WUWe0N1RUKwJt23DybJzQDRm4NwMrj7O4JHZhgQaEeHC5FSnfDBfm1xWPJurj4iqMmLqF+QYbiGZL9MmpCmATrExizmzC8oowsaE+K2yayWiUg+Znx5aZRfhOvKEvk/8yYQtokdbs1mGy+IAvErmgdWuO/FsrjFhyoREdE+AvnptFgMzZr5LHUZEtwTo09FYO8bMiTdn5ptNvJKLcHvXc/1gz7Hd3AmRGLMxYdmDyT9M+DWaKXPZU89KMvcsw80yuLUk9JLRTI9wlMWtJGGw4RoTfgKyI5kwSL6MMgAAAABJRU5ErkJggg=="></a>
+		<span>←点击左侧寻找</span>
 	<select id="seldata"></select>
-
-
 	<button id="btnAdd3">
 		增加需求
 	</button>
 	<button id="btnSetting">
 		参数设置
 	</button>
+	<button id="btndefaultDevice">
+		更改默认设备
+	</button>
 
-	<div style="margin-top:5px;">
-		<button id="btnReset1">
-			重置参数
-		</button>
-		<button id="btnReset2">
-			重置设备
-		</button>
-		<button id="btnReset4">
-			重置配方
-		</button>
-		<!--<input type="checkbox" id="isMerge" checked />合并同配方多产物-->
-		<input type="checkbox" id="hideSource" /><label for="hideSource">隐藏原料</label>
-		<input type="checkbox" id="selfAcc" checked /><label for="selfAcc">自喷涂增产剂</label>
-		<input type="checkbox" id="chemicalDoubl" checked /><label for="chemicalDoubl">化工技术革新（科技翻倍）</label>
-		<input type="checkbox" id="showMaxOneBelt" /><label for="showMaxOneBelt">1条传送带最高支持设备数量</label>
-		<label for="selore" class="minspeed">采矿作业速度：</label>
-		<input type="text" class="textbox" id="selore" value="100" style="width:40px;" />%
-		<br>
-		<div style="height: 5px;"></div>
-		<span>默认使用以下设备：</span><br>
-		<div style="height: 5px;"></div>
+	<div id="defaultDevice" style="display:none;">
 		<select id="selmodein">
 			<option value="制作台">制作台</option>
 			<option value="天穹装配厂">天穹装配厂</option>
@@ -111,31 +91,12 @@
 			<option value="微型粒子对撞机">微型粒子对撞机</option>
 			<option value="巨型粒子对撞机">巨型粒子对撞机</option>
 		</select>
-		<!-- <select id="accType">
-			<option value="增产剂">增产剂</option>
-		</select> -->
 		<select id="accValue">
 			<option value="无">不使用增产剂</option>
 			<option value="加速">加速</option>
 			<option value="增产">增产</option>
 		</select>
-		<span id="projectdiv" style="display:none;">
-			<select id="selprojects"></select>
-			<button id="btnLoadProject">
-				加载方案
-			</button>
-			<button id="btnReset5">
-				重置方案
-			</button>
-		</span>
 	</div>
-	<div id="Split" style="display:none;">
-
-	</div>
-	<div id="UIselector" style="display:none;">
-
-	</div>
-
 
 	<div id="MoreSetting" style="display:none;">
 		<p><span class="label">运输站集装物流：</span> <input id="speed1_7" class="textbox" type="number" value="1" /> </p>
@@ -168,6 +129,43 @@
 				class="speed1 textbox" type="number" value="0.5" /> </p>
 		<p><span class="label">小数点后保留： </span><input id="pointLength" class="textbox" type="number" value="1" /> 位</p>
 	</div>
+	
+	<div style="margin-top:5px;">
+		<button id="btnReset1">
+			重置参数
+		</button>
+		<button id="btnReset2">
+			重置设备
+		</button>
+		<button id="btnReset3">
+			重置配方
+		</button>
+		<!--<input type="checkbox" id="isMerge" checked />合并同配方多产物-->
+		<input type="checkbox" id="hideSource" /><label for="hideSource">隐藏原料</label>
+		<input type="checkbox" id="selfAcc" checked /><label for="selfAcc">自喷涂增产剂</label>
+		<input type="checkbox" id="chemicalDoubl" checked /><label for="chemicalDoubl">化工技术革新（科技翻倍）</label>
+		<input type="checkbox" id="showMaxOneBelt" /><label for="showMaxOneBelt">1条传送带最高支持设备数量</label>
+		<label for="selore" class="minspeed">采矿作业速度：</label>
+		<input type="text" class="textbox" id="selore" value="100" style="width:40px;" />%
+		<div style="height: 0px;"></div>
+		<span id="projectdiv">
+			<br>
+			<select id="selprojects"></select>
+			<button id="btnLoadProject">
+				加载此方案
+			</button>
+			<button id="btnReset4">
+				删除此方案
+			</button>
+			<button id="btnReset5">
+				删除所有方案
+			</button>
+		</span>
+	</div>
+
+	<div id="Split" style="display:none;"></div>
+	<div id="UIselector" style="display:none;"></div>
+
 	<div id="result">
 		<div class="list">
 			<span v-for="(x,index) in xqs">

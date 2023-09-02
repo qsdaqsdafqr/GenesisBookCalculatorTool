@@ -4417,10 +4417,11 @@ function f_initData() {
     });
     // console.log(data);
 }
-var pointLength = 1;
-var settingsLocal = {};
-var settings = {};
-var config = {};
+var pointLength = 1; //小数保留位数
+var settingsLocal = {}; //本地不存储
+var settings = {}; //通过物品id保存增产信息
+var settings_pf = {}; //保存上次选择的默认配方
+var config = {}; //保存页面参数
 function saveData(key, value) {
     if (window.localStorage) {
         localStorage.setItem(key, value);
@@ -4438,18 +4439,18 @@ function getData(key) {
 function saveConfig() {
     saveData("machine_config" + version, JSON.stringify(config));
 }
-function loadConfig() {    
+function loadConfig() {
     var json = getData("machine_config" + version);
     if (json) {
         eval("config = " + json);
     }
     for (let key in config) {
         if (config.hasOwnProperty(key)) {
-          let value = config[key];
-          let id = $("#"+key);
+            let value = config[key];
+            let id = $("#" + key);
             id.val(value);
         }
-    }  
+    }
 }
 function saveSetting() {
     saveData("machine_settings" + version, JSON.stringify(settings));
@@ -4470,7 +4471,6 @@ function loadSettingTime() {
         eval("settings_time = " + json);
     }
 }
-var settings_pf = {}; //保存上次选择的默认配方
 function saveSettingPf() {
     saveData("machine_settings_pf" + version, JSON.stringify(settings_pf));
 }
@@ -4819,12 +4819,6 @@ function f_init() {
             number_editor_number: 0,
         },
         methods: {
-            //   speedChange: function (item) {
-            //     settings_time[item.machineName] = parseFloat(item.speed);
-            //     saveSettingTime();
-            //     update_all();
-            //   },
-
             onClickNumber: function (index) {
                 if (this.xqs && this.xqs[index]) {
                     this.number_editor_index = index;
@@ -4873,8 +4867,8 @@ function f_init() {
     loadSettingTime();
     loadSettingPf();
     loadSettingProjects();
-
     projectsUpdate();
+
     $("#chemicalDoubl").change(function () {
         chemicalDouble = !chemicalDouble;
         $(data).each(function () {
@@ -4911,8 +4905,8 @@ function f_init() {
         };
         for (let key in defaultconfig) {
             if (defaultconfig.hasOwnProperty(key)) {
-              let value = defaultconfig[key];
-              let id = $("#"+key);
+                let value = defaultconfig[key];
+                let id = $("#" + key);
                 id.val(value);
                 console.log(delete config[key]);
             }
@@ -4936,8 +4930,8 @@ function f_init() {
         };
         for (let key in defaultconfig) {
             if (defaultconfig.hasOwnProperty(key)) {
-              let value = defaultconfig[key];
-              let id = $("#"+key);
+                let value = defaultconfig[key];
+                let id = $("#" + key);
                 id.val(value);
                 delete config[key];
             }
@@ -4947,12 +4941,6 @@ function f_init() {
         saveSetting();
         update_all();
     });
-
-    //   $("#btnReset3").click(function () {
-    //     settings_time = {};
-    //     saveSettingTime();
-    //     update_all();
-    //   });
     $("#speed1_7").change(function () {
         config["speed1_7"] = $("#speed1_7").val();
         saveConfig();
@@ -5030,7 +5018,12 @@ function f_init() {
         update_all();
     });
     $("#btnSetting").click(function () {
+        $("#defaultDevice").hide();
         $("#MoreSetting").toggle();
+    });
+    $("#btndefaultDevice").click(function () {
+        $("#MoreSetting").hide();
+        $("#defaultDevice").toggle();
     });
     $("#showMaxOneBelt").change(function () {
         update_all();
@@ -5189,10 +5182,27 @@ function f_init() {
         update_all();
     });
 
-    $("#btnReset4").click(function () {
+    $("#btnReset3").click(function () {
         settings_pf = {};
         saveSettingPf();
         update_all();
+    });
+    $("#btnReset4").click(function () {
+        var value = $("#selprojects").val();
+        if (!value || projects[0].name == "未保存任何方案") {
+            alert("未选择方案");
+            return;
+        } else {
+            for (var i = 0; i < projects.length; i++) {
+                if (projects[i].name == value) {
+                    projects.splice(i, 1);
+                    saveSettingProjects();
+                    projectsUpdate();
+                    update_all();
+                    return;
+                }
+            }
+        }
     });
     $("#btnReset5").click(function () {
         projects = [];
@@ -5201,15 +5211,21 @@ function f_init() {
     });
     $("#btnLoadProject").click(function () {
         var value = $("#selprojects").val();
-        if (!value) return;
-        for (var i = 0; i < projects.length; i++) {
-            if (projects[i].name == value) {
-                xqs = projects[i].value;
-                singleMake = projects[i].singleMake || [];
-                ig_names = projects[i].ig_names || [];
-                settings = projects[i].settings || {};
-                update_all();
-                return;
+        loadSettingProjects();
+        if (!value || projects[0].name == "未保存任何方案") {
+            alert("未选择方案");
+            return;
+        } else {
+            for (var i = 0; i < projects.length; i++) {
+                if (projects[i].name == value) {
+                    singleMake = projects[i].singleMake || [];
+                    ig_names = projects[i].ig_names || [];
+                    xqs = projects[i].value;
+                    settings = projects[i].settings || {};
+                    config = projects[i].config || {};
+                    update_all();
+                    return;
+                }
             }
         }
     });
@@ -6018,16 +6034,17 @@ function f_remove_ig(name) {
     update_all();
 }
 function projectsUpdate() {
-    $("#selprojects").html("");
-    $(projects).each(function () {
+    $("#selprojects").empty();
+    if(projects.length == 0) {
         $("#selprojects").append(
-            "<option value='" + this.name + "'>" + this.name + "</option>"
+            "<option value=''>未保存任何方案</option>"
         );
-    });
-    if (projects.length) {
-        $("#projectdiv").show();
-    } else {
-        $("#projectdiv").hide();
+    }else{
+        $(projects).each(function () {
+            $("#selprojects").append(
+                "<option value='" + this.name + "'>" + this.name + "</option>"
+            );
+        });
     }
 }
 function f_save() {
@@ -6072,6 +6089,8 @@ function f_save() {
         value: xqs,
         // 增产剂和工厂类型设置
         settings: product_settings,
+        config: config,
+        
     };
     saveSettingProjects();
     projectsUpdate();
