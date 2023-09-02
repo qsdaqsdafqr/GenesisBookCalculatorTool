@@ -217,37 +217,38 @@ var data = [
         noExtra: true,
     }, {
         s: [{
-            name: "水"
+            name: "水",
+            n: 100,
         }],
         q: [],
         m: "抽水设施",
-        t: 1,
+        t: 60,
     }, {
         s: [{
             name: "硝酸",
-            n: 1
+            n: 100
         }],
         group: "原料",
         m: "抽水设施",
         q: [],
-        t: 1,
+        t: 60,
     }, {
         s: [{
             name: "剧毒液体",
-            n: 1
+            n: 100
         }],
         m: "抽水设施",
         q: [],
-        t: 1,
+        t: 60,
     }, {
         s: [{
             name: "盐水",
-            n: 1
+            n: 100
         }],
         group: "原料",
         m: "抽水设施",
         q: [],
-        t: 1,
+        t: 60,
     }, {
         s: [{
             name: "临界光子",
@@ -4369,8 +4370,8 @@ function f_initData() {
         }
         if (item.m == "抽水设施") {
             ms = [
-                { name: "抽水机", speed: 100 },
-                { name: "聚束液体汲取设施", speed: 500 },
+                { name: "抽水机", speed: 1 },
+                { name: "聚束液体汲取设施", speed: 5 },
             ];
         }
         if (item.m == "精炼设备") {
@@ -4795,10 +4796,153 @@ function addItem(item, number) {
 
     update_all();
 }
-// function removeItem(itemId) {
-//     xqs = xqs.filter(function (one) { return one.item.id != itemId; });
-//     update_all();
-// }
+
+/*产量：可燃冰 0.65/s 氢0.25/s
+每分钟采集物=60*产量*采矿作业速度*8（这是大佬量化表的现状）
+可燃冰 60*0.65*110%*8=343.2
+氢气 60*0.25*110%*8=132
+供电消耗是按产出物的总能量占比计算的
+供电占比=产量*能量/总能量
+可燃冰占比=0.65*4.8/（0.65*4.8+0.25*8）=60.9%
+氢气占比=0.25*8/（0.65*4.8+0.25*8）=39.1%
+每分钟供电消耗=60*采集器功率*供电占比/采集物能量
+可燃冰供电消耗=60*30*60.9%/4.8=228.5
+氢气供电消耗=60*30*39.1%/8=87.9
+实际产出=每分钟采集-供电消耗
+可燃冰=343.2-228.5=114.7
+氢气=132-87.9=44.1*/
+
+function doSpeed1() {
+    var speed1_1 = parseFloat($("#speed1_1").val()); //氢(气态)
+    var speed1_2 = parseFloat($("#speed1_2").val()); //重氢
+    var speed1_3 = parseFloat($("#speed1_3").val()); //氦
+    var speed2_1 = parseFloat($("#speed2_1").val()); //氢(巨冰)
+    var speed2_2 = parseFloat($("#speed2_2").val()); //可燃冰
+    var speed2_3 = parseFloat($("#speed2_3").val()); //氨
+    var speed3_1 = parseFloat($("#speed3_1").val()); //氮
+    var speed3_2 = parseFloat($("#speed3_2").val()); //氧
+    var speed3_3 = parseFloat($("#speed3_3").val()); //一氧化碳
+    var speed3_4 = parseFloat($("#speed3_4").val()); //二氧化碳
+    var ore = parseFloat($("#selore").val());
+    config["speed1_1"] = $("#speed1_1").val();
+    config["speed1_2"] = $("#speed1_2").val();
+    config["speed1_3"] = $("#speed1_3").val();
+    config["speed2_1"] = $("#speed2_1").val();
+    config["speed2_2"] = $("#speed2_2").val();
+    config["speed2_3"] = $("#speed2_3").val();
+    config["speed3_1"] = $("#speed3_1").val();
+    config["speed3_2"] = $("#speed3_2").val();
+    config["speed3_3"] = $("#speed3_3").val();
+    config["speed3_4"] = $("#speed3_4").val();
+    saveConfig();
+    function getSum(value1, value2, value3, p1, p2, p3) {
+        var sum = 0;
+        sum = value1 * 0.01 * ore * 8;
+        var per = (value1 * p1) / (value1 * p1 + value2 * p2 + value3 * p3);
+        sum -= (30 * per) / p1;
+
+        return sum;
+    }
+    $(data).each(function () {
+        if (
+            this.s && [
+                "氢", "重氢", "氦", "可燃冰",
+                "氨", "氮", "氧", "一氧化碳", "二氧化碳"
+            ].includes(this.s[0].name)
+        ) {
+            if (this.m) {
+                for (var i = 0; i < this.m.length; i++) {
+                    if (this.m[i].name == "轨道采集器(气态)") {
+                        if (this.s[0].name == "氢") {
+                            this.t = 1 / getSum(speed1_1, speed1_2, speed1_3, 9, 400, 0);
+                            //console.log("T1:" + 60/this.t);
+                        } else if (this.s[0].name == "重氢") {
+                            this.t = 1 / getSum(speed1_2, speed1_1, speed1_3, 400, 9, 0);
+                            //console.log("T2:" + 60/this.t);
+                        } else if (this.s[0].name == "氦") {
+                            this.t = 1 / (speed1_3 * 0.01 * ore * 8);
+                            //console.log("T3:" + 60/this.t);
+                        }
+                    }
+                    if (this.m[i].name == "轨道采集器(巨冰)") {
+                        if (this.s[0].name == "氢") {
+                            this.t = 1 / getSum(speed2_1, speed2_2, speed2_3, 9, 4.8, 6);
+                            //console.log("T4:" + 60/this.t);
+                        } else if (this.s[0].name == "可燃冰") {
+                            this.t = 1 / getSum(speed2_2, speed2_1, speed2_3, 4.8, 9, 6);
+                            //console.log("T5:" + 60/this.t);
+                        } else if (this.s[0].name == "氨") {
+                            this.t = 1 / getSum(speed2_3, speed2_2, speed2_1, 6, 4.8, 9);
+                            //console.log("T6:" + 60/this.t);
+                        }
+                    }
+                    if (this.m[i].name == "大气采集站") {
+                        if (this.s[0].name == "氮") {
+                            this.t = 1 / (speed3_1);
+                        } else if (this.s[0].name == "氧") {
+                            this.t = 1 / (speed3_2);
+                        } else if (this.s[0].name == "一氧化碳") {
+                            this.t = 1 / (speed3_3);
+                        } else if (this.s[0].name == "二氧化碳") {
+                            this.t = 1 / (speed3_4);
+                        }
+                    }
+                }
+            }
+        }
+});
+}
+
+function selorecalculator() {
+    $(data).each(function () {
+        if (this.m) {
+            for (var i = 0; i < this.m.length; i++) {
+                if (this.m[i].name == "矿脉") {
+                    this.m[i].speed = Math.min(
+                        1 * 0.01 * parseFloat($("#selore").val()),
+                        240
+                    );
+                }
+                if (this.m[i].name == "采矿机") {
+                    this.m[i].speed = Math.min(
+                        6 * 0.01 * parseFloat($("#selore").val()),
+                        240
+                    );
+                }
+                if (this.m[i].name == "大型采矿机") {
+                    this.m[i].speed =
+                        2 *
+                        20 *
+                        0.01 *
+                        parseFloat($("#selore").val()) *
+                        0.01 *
+                        parseFloat($("#speed1_8").val());
+                }
+                if (this.m[i].name == "抽水机") {
+                    this.m[i].speed = Math.min(
+                        0.01 * parseFloat($("#selore").val()),
+                        144
+                    );
+                }
+                if (this.m[i].name == "聚束液体汲取设施") {
+                    this.m[i].speed = Math.min(
+                        5 * 0.01 * parseFloat($("#selore").val()),
+                        144
+                    );
+                }
+                if (this.m[i].name == "原油萃取站") {
+                    this.m[i].speed = Math.min(
+                        2 * 0.01 * (parseFloat($("#oilSpeed").val()) * parseFloat($("#selore").val())),
+                        240
+                    );
+                }
+            }
+        }
+    });
+    config["selore"] = $("#selore").val();
+    saveConfig();
+    doSpeed1();
+}
 
 var app = null;
 function f_init() {
@@ -4858,16 +5002,17 @@ function f_init() {
             },
         },
     });
+
     f_initData();
     f_fillData();
     loadConfig()
-    doSpeed1();
-    update_all();
     loadSetting();
     loadSettingTime();
     loadSettingPf();
     loadSettingProjects();
     projectsUpdate();
+    selorecalculator();
+    update_all();
 
     $("#chemicalDoubl").change(function () {
         chemicalDouble = !chemicalDouble;
@@ -4967,54 +5112,7 @@ function f_init() {
         update_all();
     });
     $("#selore").change(function () {
-        $(data).each(function () {
-            if (this.m) {
-                for (var i = 0; i < this.m.length; i++) {
-                    if (this.m[i].name == "矿脉") {
-                        this.m[i].speed = Math.min(
-                            1 * 0.01 * parseFloat($("#selore").val()),
-                            240
-                        );
-                    }
-                    if (this.m[i].name == "采矿机") {
-                        this.m[i].speed = Math.min(
-                            6 * 0.01 * parseFloat($("#selore").val()),
-                            240
-                        );
-                    }
-                    if (this.m[i].name == "大型采矿机") {
-                        this.m[i].speed =
-                            2 *
-                            20 *
-                            0.01 *
-                            parseFloat($("#selore").val()) *
-                            0.01 *
-                            parseFloat($("#speed1_8").val());
-                    }
-                    if (this.m[i].name == "抽水机") {
-                        this.m[i].speed = Math.min(
-                            (50 * 0.01 * parseFloat($("#selore").val())) / 60,
-                            240
-                        );
-                    }
-                    if (this.m[i].name == "聚束液体汲取设施") {
-                        this.m[i].speed = Math.min(
-                            (50 * 0.01 * parseFloat($("#selore").val())) / 60,
-                            240
-                        );
-                    }
-                    if (this.m[i].name == "原油萃取站") {
-                        this.m[i].speed = Math.min(
-                            (2 * 0.01 * (parseFloat($("#oilSpeed").val()) * parseFloat($("#selore").val()))) / 60,
-                            240
-                        );
-                    }
-                }
-            }
-        });
-        config["selore"] = $("#selore").val();
-        saveConfig();
-        doSpeed1();
+        selorecalculator();
         update_all();
     });
     $("#btnSetting").click(function () {
@@ -5053,7 +5151,7 @@ function f_init() {
                 for (var i = 0; i < this.m.length; i++) {
                     if (this.m[i].name == "原油萃取站") {
                         this.m[i].speed = Math.min(
-                            (2 * (parseFloat($("#oilSpeed").val()) * parseFloat($("#selore").val()))) / 60,
+                            2 * 0.01 * (parseFloat($("#oilSpeed").val()) * parseFloat($("#selore").val())),
                             240
                         );
                     }
@@ -5081,104 +5179,7 @@ function f_init() {
     //     update_all();
     //   });
 
-    /*产量：可燃冰 0.65/s 氢0.25/s
-  每分钟采集物=60*产量*采矿作业速度*8（这是大佬量化表的现状）
-  可燃冰 60*0.65*110%*8=343.2
-  氢气 60*0.25*110%*8=132
-  供电消耗是按产出物的总能量占比计算的
-  供电占比=产量*能量/总能量
-  可燃冰占比=0.65*4.8/（0.65*4.8+0.25*8）=60.9%
-  氢气占比=0.25*8/（0.65*4.8+0.25*8）=39.1%
-  每分钟供电消耗=60*采集器功率*供电占比/采集物能量
-  可燃冰供电消耗=60*30*60.9%/4.8=228.5
-  氢气供电消耗=60*30*39.1%/8=87.9
-  实际产出=每分钟采集-供电消耗
-  可燃冰=343.2-228.5=114.7
-  氢气=132-87.9=44.1*/
-
-    function doSpeed1() {
-        var speed1_1 = parseFloat($("#speed1_1").val()); //氢(气态)
-        var speed1_2 = parseFloat($("#speed1_2").val()); //重氢
-        var speed1_3 = parseFloat($("#speed1_3").val()); //氦
-        var speed2_1 = parseFloat($("#speed2_1").val()); //氢(巨冰)
-        var speed2_2 = parseFloat($("#speed2_2").val()); //可燃冰
-        var speed2_3 = parseFloat($("#speed2_3").val()); //氨
-        var speed3_1 = parseFloat($("#speed3_1").val()); //氮
-        var speed3_2 = parseFloat($("#speed3_2").val()); //氧
-        var speed3_3 = parseFloat($("#speed3_3").val()); //一氧化碳
-        var speed3_4 = parseFloat($("#speed3_4").val()); //二氧化碳
-        var ore = parseFloat($("#selore").val());
-        config["speed1_1"] = $("#speed1_1").val();
-        config["speed1_2"] = $("#speed1_2").val();
-        config["speed1_3"] = $("#speed1_3").val();
-        config["speed2_1"] = $("#speed2_1").val();
-        config["speed2_2"] = $("#speed2_2").val();
-        config["speed2_3"] = $("#speed2_3").val();
-        config["speed3_1"] = $("#speed3_1").val();
-        config["speed3_2"] = $("#speed3_2").val();
-        config["speed3_3"] = $("#speed3_3").val();
-        config["speed3_4"] = $("#speed3_4").val();
-        saveConfig();
-        function getSum(value1, value2, value3, p1, p2, p3) {
-            var sum = 0;
-            sum = value1 * 0.01 * ore * 8;
-            var per = (value1 * p1) / (value1 * p1 + value2 * p2 + value3 * p3);
-            sum -= (30 * per) / p1;
-
-            return sum;
-        }
-        $(data).each(function () {
-            if (
-                this.s && [
-                    "氢", "重氢", "氦", "可燃冰",
-                    "氨", "氮", "氧", "一氧化碳", "二氧化碳"
-                ].includes(this.s[0].name)
-            ) {
-                if (this.m) {
-                    for (var i = 0; i < this.m.length; i++) {
-                        if (this.m[i].name == "轨道采集器(气态)") {
-                            if (this.s[0].name == "氢") {
-                                this.t = 1 / getSum(speed1_1, speed1_2, speed1_3, 9, 400, 0);
-                                //console.log("T1:" + 60/this.t);
-                            } else if (this.s[0].name == "重氢") {
-                                this.t = 1 / getSum(speed1_2, speed1_1, speed1_3, 400, 9, 0);
-                                //console.log("T2:" + 60/this.t);
-                            } else if (this.s[0].name == "氦") {
-                                this.t = 1 / (speed1_3 * 0.01 * ore * 8);
-                                //console.log("T3:" + 60/this.t);
-                            }
-                        }
-                        if (this.m[i].name == "轨道采集器(巨冰)") {
-                            if (this.s[0].name == "氢") {
-                                this.t = 1 / getSum(speed2_1, speed2_2, speed2_3, 9, 4.8, 6);
-                                //console.log("T4:" + 60/this.t);
-                            } else if (this.s[0].name == "可燃冰") {
-                                this.t = 1 / getSum(speed2_2, speed2_1, speed2_3, 4.8, 9, 6);
-                                //console.log("T5:" + 60/this.t);
-                            } else if (this.s[0].name == "氨") {
-                                this.t = 1 / getSum(speed2_3, speed2_2, speed2_1, 6, 4.8, 9);
-                                //console.log("T6:" + 60/this.t);
-                            }
-                        }
-                        if (this.m[i].name == "大气采集站") {
-                            if (this.s[0].name == "氮") {
-                                this.t = 1 / (speed3_1);
-                            } else if (this.s[0].name == "氧") {
-                                this.t = 1 / (speed3_2);
-                            } else if (this.s[0].name == "一氧化碳") {
-                                this.t = 1 / (speed3_3);
-                            } else if (this.s[0].name == "二氧化碳") {
-                                this.t = 1 / (speed3_4);
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }
-
     $(".speed1").change(function () {
-        doSpeed1();
         update_all();
     });
 
@@ -5223,6 +5224,13 @@ function f_init() {
                     xqs = projects[i].value;
                     settings = projects[i].settings || {};
                     config = projects[i].config || {};
+                    for (let key in config) {
+                        if (config.hasOwnProperty(key)) {
+                            let value = config[key];
+                            let id = $("#" + key);
+                            id.val(value);
+                        }
+                    }
                     update_all();
                     return;
                 }
@@ -5972,6 +5980,7 @@ function update_all() {
     }
     app.totalSpace = space;
     app.totalAcc = totalAcc.toFixed(2);
+    selorecalculator();
 }
 function selectM(id, m) {
     settings[id] = settings[id] || {};
