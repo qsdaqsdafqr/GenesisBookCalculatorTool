@@ -1,392 +1,383 @@
-<html>
-
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
 <head>
 	<title>戴森球计划创世之书量产量化计算器工具</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<meta name="keywords" content="戴森球计划,创世之书,量产量化工具,量产量化计算器,自动化工具,生产工具" />
-	<meta name="description" content="《戴森球计划·创世之书》自动化量产计算器，可以全自动计算量产某个产品的具体产能需求。" />
-
-	<script src="./Scripts/jquery.min.2.1.4.js"></script>
-	<script src="./Scripts/jquery.cookie.min.1.4.1.js"></script>
-	<script src="./Scripts/vue.min.2.5.16.js"></script>
-	<script src="./Scripts/jquery.tips.js"></script>
-	<script src="./Scripts/lib/cocoMessage.js"></script>
-	<script src="./Scripts/data.js"></script>
-	<script src="./Scripts/lib/pako.js"></script>
-	<script src="./Scripts/blueprint.js"></script>
-	<link rel="stylesheet" type="text/css" href="./Scripts/style.css">
-
-	<!--
-		<script src="https://svlik.gitee.io/dysonsphereprogramtool/Scripts/jquery.min.2.1.4.js"></script>
-		<script src="https://svlik.gitee.io/dysonsphereprogramtool/Scripts/jquery.min.2.1.4.js"></script>
-		<script src="https://svlik.gitee.io/dysonsphereprogramtool/Scripts/jquery.cookie.min.1.4.1.js"></script>
-		<script src="https://svlik.gitee.io/dysonsphereprogramtool/Scripts/vue.min.2.5.16.js"></script>
-		<script src="https://svlik.gitee.io/dysonsphereprogramtool/Scripts/jquery.tips.js"></script>
-		<script src="https://svlik.gitee.io/dysonsphereprogramtool/Scripts/lib/cocoMessage.js"></script>
-		<script src="https://svlik.gitee.io/dysonsphereprogramtool/Scripts/data.js"></script>
-		<script src="https://svlik.gitee.io/dysonsphereprogramtool/Scripts/lib/pako.js"></script>
-		<script src="https://svlik.gitee.io/dysonsphereprogramtool/Scripts/blueprint.js"></script>
-		<link rel="stylesheet" type="text/css" href="https://svlik.gitee.io/dysonsphereprogramtool/Scripts/style.css">
-	-->
-
+	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8"/>
+	<meta name="keywords" content="戴森球计划,创世之书,量产量化工具,量产量化计算器,自动化工具,生产工具"/>
+	<meta name="description" content="《戴森球计划·创世之书》自动化量产计算器，可以全自动计算量产某个产品的具体产能需求。"/>
+    <link rel="shortcut icon" href="./favicon.ico">
+	<script src="https://cdn.staticfile.org/jquery/3.7.1/jquery.min.js"></script>
+	<link href="https://cdn.staticfile.org/bootstrap/5.3.1/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+	<script src="https://cdn.staticfile.org/bootstrap/5.3.1/js/bootstrap.bundle.js" crossorigin="anonymous"></script>
+	<script src="https://cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+	<link rel="stylesheet" href="https://cdn.staticfile.org/toastr.js/2.1.4/toastr.min.css">
+	<script src="https://cdn.staticfile.org/toastr.js/2.1.4/toastr.min.js"></script>
+	<script src="./require/jquery.tips.js"></script>
+	<script type="module" src="./src/Scripts/config.js"></script>
+	<script type="module" src="./src/Scripts/data.js"></script>
+	<link rel="stylesheet" href="./src/assets/style.css">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
-<body style="padding:5px;">
-	每分钟数量：<input type="text" id="txtnumber" value="60" />
-	或者： <select id="selmaince"> <option value="">选择设备数量</option>
-	</select>
-		<a href="javascript:f_add()" style="margin-left:10px;margin-right:10px;"> <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAZVJREFUWEftl89VwkAQh3+DBRjTgHpYrtKBdCB0gEfDRSsQK5AL8YgdiB1gB3gll1CAMRTgjm9XCZslIf7Je8khe0y+N5m3mfl2h1Dxooq/jyQB5yHothhPAJx0UhxKRj8ethfquTNZdlqkODqxko8loR9fibnmdDyeFnFJAq4fxAAOs3aEgJc3T3TVO9cPQgDHOTsXR544KuY4jLz2qeLMBHjf74g8oVnXD0rlmgRqtQO5xcWM5/eh6H3XgOqGs5x6WUWe0N1RUKwJt23DybJzQDRm4NwMrj7O4JHZhgQaEeHC5FSnfDBfm1xWPJurj4iqMmLqF+QYbiGZL9MmpCmATrExizmzC8oowsaE+K2yayWiUg+Znx5aZRfhOvKEvk/8yYQtokdbs1mGy+IAvErmgdWuO/FsrjFhyoREdE+AvnptFgMzZr5LHUZEtwTo09FYO8bMiTdn5ptNvJKLcHvXc/1gz7Hd3AmRGLMxYdmDyT9M+DWaKXPZU89KMvcsw80yuLUk9JLRTI9wlMWtJGGw4RoTfgKyI5kwSL6MMgAAAABJRU5ErkJggg=="></a>
-		<span>←点击左侧寻找</span>
-	<select id="seldata"></select>
-	<button id="btnAdd3">
-		增加需求
-	</button>
-	<button id="btnSetting">
-		参数设置
-	</button>
-	<button id="btndefaultDevice">
-		更改默认设备
-	</button>
-
-	<div id="defaultDevice" style="display:none;">
-		<select id="selmodein">
-			<option value="制作台">制作台</option>
-			<option value="天穹装配厂">天穹装配厂</option>
-		</select>
-		<select id="circuitEtching">
-			<option value="电路蚀刻机">电路蚀刻机</option>
-			<option value="精密结构组装厂">精密结构组装厂</option>
-		</select>
-		<select id="highPrecision">
-			<option value="高精度装配线">高精度装配线</option>
-			<option value="精密结构组装厂">精密结构组装厂</option>
-		</select>
-		<select id="furnace">
-			<option value="电弧熔炉">电弧熔炉</option>
-			<option value="位面熔炉">位面熔炉</option>
-			<option value="物质裂解塔">物质裂解塔</option>
-		</select>
-		<select id="mineralProcess">
-			<option value="矿物处理厂">矿物处理厂</option>
-			<option value="物质裂解塔">物质裂解塔</option>
-		</select>
-		<select id="pump">
-			<option value="抽水机">抽水机</option>
-			<option value="聚束液体汲取设施">聚束液体汲取设施</option>
-		</select>
-		<br>
-		<select id="refin">
-			<option value="精炼厂">精炼厂</option>
-			<option value="巨型化学反应釜">巨型化学反应釜</option>
-		</select>
-		<select id="chemical">
-			<option value="化工厂">化工厂</option>
-			<option value="巨型化学反应釜">巨型化学反应釜</option>
-		</select>
-		<select id="advancchemical">
-			<option value="先进化学反应釜">先进化学反应釜</option>
-			<option value="巨型化学反应釜">巨型化学反应釜</option>
-		</select>
-		<select id="accelerator">
-			<option value="微型粒子对撞机">微型粒子对撞机</option>
-			<option value="巨型粒子对撞机">巨型粒子对撞机</option>
-		</select>
-		<select id="accValue">
-			<option value="无">不使用增产剂</option>
-			<option value="加速">加速</option>
-			<option value="增产">增产</option>
-		</select>
-	</div>
-
-	<div id="MoreSetting" style="display:none;">
-		<p><span class="label">运输站集装物流：</span> <input id="speed1_7" class="textbox" type="number" value="1" /> </p>
-		<p><span class="label">大型采矿机开采速度：</span> <input id="speed1_8" class="textbox" type="number" value="100" /> </p>
-		<p><span class="label">原油速度：</span> <input id="oilSpeed" class="textbox" type="number" value="4" /> </p>
-		<p style="display: inline-block; margin-right: 5px;"><span class="label">气态行星参数：</span> </p>
-		<p style="display: inline-block; margin-right: 10px;"><span>氢：</span> <input data-name="氢" id="speed1_1"
-				class="speed1 textbox" type="number" value="1" /> </p>
-		<p style="display: inline-block; margin-right: 10px;"><span>重氢：</span> <input data-name="重氢" id="speed1_2"
-				class="speed1 textbox" type="number" value="0.02" /> </p>
-		<p style="display: inline-block; margin-right: 10px;"><span>氦：</span> <input data-name="氦" id="speed1_3"
-				class="speed1 textbox" type="number" value="0.02" /> </p>
-		<br>
-		<p style="display: inline-block; margin-right: 5px;"><span class="label">冰巨星参数：</span> </p>
-		<p style="display: inline-block; margin-right: 10px;">氢：</span> <input data-name="氢" id="speed2_1"
-				class="speed1 textbox" type="number" value="0.5" /> </p>
-		<p style="display: inline-block; margin-right: 10px;">可燃冰：</span> <input data-name="可燃冰" id="speed2_2"
-				class="speed1 textbox" type="number" value="0.5" /> </p>
-		<p style="display: inline-block; margin-right: 10px;">氨：</span> <input data-name="氨" id="speed2_3"
-				class="speed1 textbox" type="number" value="0.15" /> </p>
-		<br>
-		<p style="display: inline-block; margin-right: 5px;"><span class="label">大气采集站参数：</span> </p>
-		<p style="display: inline-block; margin-right: 10px;">氮：</span> <input data-name="氮" id="speed3_1"
-				class="speed1 textbox" type="number" value="0.5" /> </p>
-		<p style="display: inline-block; margin-right: 10px;">氧：</span> <input data-name="氧" id="speed3_2"
-				class="speed1 textbox" type="number" value="0.5" /> </p>
-		<p style="display: inline-block; margin-right: 10px;">一氧化碳：</span> <input data-name="一氧化碳" id="speed3_3"
-				class="speed1 textbox" type="number" value="0.5" /> </p>
-		<p style="display: inline-block; margin-right: 10px;">二氧化碳：</span> <input data-name="二氧化碳" id="speed3_4"
-				class="speed1 textbox" type="number" value="0.5" /> </p>
-		<p><span class="label">小数点后保留： </span><input id="pointLength" class="textbox" type="number" value="1" /> 位</p>
-	</div>
-	
-	<div style="margin-top:5px;">
-		<button id="btnReset1">
-			重置参数
-		</button>
-		<button id="btnReset2">
-			重置设备
-		</button>
-		<button id="btnReset3">
-			重置配方
-		</button>
-		<!--<input type="checkbox" id="isMerge" checked />合并同配方多产物-->
-		<input type="checkbox" id="hideSource" /><label for="hideSource">隐藏原料</label>
-		<input type="checkbox" id="selfAcc" checked /><label for="selfAcc">自喷涂增产剂</label>
-		<input type="checkbox" id="chemicalDoubl" checked /><label for="chemicalDoubl">化工技术革新（科技翻倍）</label>
-		<input type="checkbox" id="showMaxOneBelt" /><label for="showMaxOneBelt">1条传送带最高支持设备数量</label>
-		<label for="selore" class="minspeed">采矿作业速度：</label>
-		<input type="text" class="textbox" id="selore" value="100" style="width:40px;" />%
-		<div style="height: 0px;"></div>
-		<span id="projectdiv">
-			<br>
-			<select id="selprojects"></select>
-			<button id="btnLoadProject">
-				加载此方案（并加载参数）
-			</button>
-			<button id="btnReset4">
-				删除此方案
-			</button>
-			<button id="btnReset5">
-				删除所有方案
-			</button>
-		</span>
-	</div>
-
-	<div id="Split" style="display:none;"></div>
-	<div id="UIselector" style="display:none;"></div>
-
-	<div id="result">
-		<div class="list">
-			<span v-for="(x,index) in xqs">
-				<img v-bind:src="'data:image/png;base64,' + icons[x.item.name]" style="width:40px;height:40px;"
-					v-if="icons[x.item.name]" v-bind:title="x.item.name"
-					@contextmenu="removeItem(index);event.preventDefault();" />
-				<span class="name" v-else=v-else>{{x.item.name}}</span>
-				*
-				<span class="item_number" @click="onClickNumber(index)">
-					<span>{{x.number}}</span>
-					<div v-if="number_editor_index === index" class="number_editor_container">
-						<input ref="input" class="number_editor" type="number" v-model.number="number_editor_number"
-							@blur="submitEditorNumber()" @focus="event.target.select()"
-							@keydown="if (event.key === 'Enter') submitEditorNumber(); else if (event.key === 'Escape') cancelEditorNumber();" />
-					</div>
-				</span>
-			</span>
-			<span v-if="xqs && xqs.length">
-				<button onclick="f_reset()">
-					重置
-				</button>
-				<button onclick="f_save()">保存方案</button>
-			</span>
-		</div>
-		<div class="list" v-if="ig_names && ig_names.length">
-			排除计算：
-			<span v-for="name in ig_names">
-				<img v-bind:src="'data:image/png;base64,' + icons[name]" style="width:40px;height:40px;"
-					v-if="icons[name]" v-bind:title="name"
-					v-bind:oncontextmenu="'f_remove_ig(\'' + name + '\'); return false'" />
-				<span class="name" v-else=v-else>{{name}}</span>
-			</span>
-			<button onclick="f_reset_ig()">重置</button>
-			<br /><small>(右键可取消单项排除)</small>
-		</div>
-		<div class="list">
-			<table border="0" cellspacing="0" cellpadding="0">
-				<tbody>
-					<tr class="header">
-						<td style="width:100px;">操作</td>
-						<td style="width:100px;">
-							物品
-							<br /><span style="font-size:12px">(点击图标显示详情)</span>
-						</td>
-						<td style="width:100px;">
-							每分钟需求
-							<br /><span style="font-size:12px">(负数代表多余)</span>
-						</td>
-						<td style="width:100px;">设备数量</td>
-						<td>
-							配方
-							<br /><span style="font-size:12px">(可选)</span>
-						</td>
-						<td>
-							增产剂等级
-							<br /><span style="font-size:12px">(可选)</span>
-						</td>
-						<td>
-							增产剂效果
-							<br /><span style="font-size:12px">(可选)</span>
-						</td>
-
-						<td>
-							制作于
-							<br /><span style="font-size:12px">(可选)</span>
-						</td>
-					</tr>
-
-					<tr v-for="item in items0" v-bind:class="item.rowClass">
-						<td></td>
-						<td class="cell-name" v-bind:data-name="item.name">
-							<span class="name">
-								<img v-bind:src="'data:image/png;base64,' + icons[item.name]"
-									style="width:40px;height:40px;" v-if="icons[item.name]" v-bind:title="item.name" />
-								<span class="name" v-else=v-else>{{item.name}}</span>
-							</span>
-						</td>
-						<td><span class="number1">{{item.number1}}</span></td>
-						<td><span class="number2">{{item.number2}}</span></td>
-						<td>
-							<a class="pf selected" v-html="item.pfTitle"></a>
-						</td>
-						<td>
-							<a class="m selected"> {{item.mName}}</a>
-						</td>
-					</tr>
-					<tr v-for="item in items" v-bind:class="item.rowClass">
-						<td class="opcell">
-							<a href="javascript:void(0)" v-bind:data-name="item.name" onclick="f_ig(this)">排除</a>
-							<a href="javascript:void(0)" v-if=" item.pf &&  item.pf.length > 1"
-								v-bind:data-name="item.name" onclick="f_split(this)">多配方</a>
-							<a href="javascript:void(0)" v-bind:data-name="item.name" onclick="f_tag(this)">标注</a>
-						</td>
-						<td class="cell-name" v-bind:data-name="item.name">
-							<img v-bind:src="'data:image/png;base64,' + icons[item.name]"
-								style="width:40px;height:40px;" v-if="icons[item.name]" v-bind:title="item.name" />
-							<span class="name" v-else=v-else>{{item.name}}</span>
-						</td>
-						<td><span class="number1">{{item.number1}}</span></td>
-						<td>
-							<span class="number2" v-html="item.number2full"></span>
-							<span v-if="item.numberOther" v-html="item.numberOther"></span>
-						</td>
-						<td>
-							<div class="pfs">
-								<a v-for="pf in item.pf" v-bind:class="pf.class" v-bind:href='pf.href'
-									v-html="pf.title"></a>
-							</div>
-						</td>
-						<td>
-							<div class="ms">
-								<a v-bind:data-modein="a.name" v-bind:data-name="a.itemName" v-for="a in item.accType"
-									v-bind:title="a.title" v-bind:class="a.class" v-bind:href='a.href'>
-									<img :src="'data:image/png;base64,' + icons[a.name]" />
-									{{a.showName}}
-								</a>
-							</div>
-						</td>
-						<td>
-							<div class="ms">
-								<a v-bind:data-modein="a.name" v-bind:data-name="a.itemName" v-for="a in item.accValue"
-									v-bind:title="a.title" v-bind:class="a.class" v-bind:href='a.href'>
-									{{a.showName}}
-								</a>
-							</div>
-							<span class="number1">需求：{{item.accTotal}}</span>
-						</td>
-						</td>
-						<td>
-							<div class="ms">
-								<a v-bind:data-modein="m.name" v-bind:data-name="m.itemName" v-for="m in item.m"
-									v-bind:title="m.title" v-bind:class="m.class" v-bind:href='m.href'>
-									<img :src="'data:image/png;base64,' + icons[m.name]" v-if="icons[m.name]" />
-									{{m.showName}}
-								</a>
-							</div>
-						</td>
-						<!--<td>
-                            <input type="text" v-bind:class="item.speedClass" v-on:change="speedChange(item)" v-model="item.speed" />
-                        </td>
-                        <td>
-                            {{item.time}}
-                        </td>-->
+<!-- <head>
+    <title>戴森球计划创世之书量产量化计算器工具</title>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+    <meta name="keywords" content="戴森球计划,创世之书,量产量化工具,量产量化计算器,自动化工具,生产工具" />
+    <meta name="description" content="《戴森球计划·创世之书》自动化量产计算器，可以全自动计算量产某个产品的具体产能需求。" />
+    <link rel="shortcut icon" href="./favicon.ico">
+    <script src="./require/jquery.min.js"></script>
+    <link href="./require/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <script src="./require/bootstrap.bundle.js" crossorigin="anonymous"></script>
+    <script src="./require/jquery.cookie.min.js"></script>
+    <script src="./require/jquery.tips.js"></script>
+    <link rel="stylesheet" href="./require/toastr.min.css">
+    <script src="./require/toastr.min.js"></script>
+    <script type="module" src="./src/Scripts/config.js"></script>
+    <script type="module" src="./src/Scripts/data.js"></script>
+    <link rel="stylesheet" href="./src/assets/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head> -->
 
 
-					</tr>
+<body style="padding:20px;">
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="确认删除？" aria-hidden="true">
+        <div class="modal-dialog modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">确认</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                确定要删除所有方案吗？
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="confirmDelete">确认删除</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="changeformula" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">请选择配方：</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="container-fluid" id="allformula"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="inputProjectName" tabindex="-1" aria-labelledby="确认删除？" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">请输入待保存方案名称：</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group">
+                        <input type="text" class="form-control text-start" placeholder="取一个名字吧~" id="projectName" />
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                        <button type="button" class="btn btn-primary" id="btnSaveProject">确认保存</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card shadow mb-2 p-2">
+        <div class="card shadow mb-2 p-2 bg-body-tertiary rounded bg-light text-dark">
+            <div class="row align-items-center">
+                <div class="col-2 text-center" style="border-right: 1px dashed black;">
+                    <span>第一步：确定产量</span>
+                </div>
+                <div class="col-8 w-auto d-flex align-items-center">
+                    <div class="input-group">
+                        <input type="number" class="form-control text-start" placeholder="每分钟需求数量" id="requireNum" />
+                        <span class="input-group-text ps-2 text-end">或者：</span>
+                        <input type="number" class="form-control text-start" placeholder="输入生产设备数量" id="machineNum" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card shadow p-2 mb-2 bg-body-tertiary rounded bg-light text-dark">
+            <form>
+                <div class="row align-items-center">
+                    <div class="col-2 text-center" style="border-right: 1px dashed black;">
+                        <span>第二步：选择产物</span>
+                    </div>
+                    <div class="w-auto d-flex text-nowrap">
+                        <button type="button" class="btn btn-primary btn-outline-light"
+                            id="productionShow">点击选择</button>
+                    </div>
+                </div>
+                <div id="UIselector" style="display:none;"></div>
+            </form>
+        </div>
+        <div class="card shadow p-2 mb-2 bg-body-tertiary rounded bg-light text-dark">
+            <form>
+                <div class="row align-items-center">
+                    <div class="col-2 text-center me-2" style="border-right: 1px dashed black;">
+                        <span>第三步：重要设置</span>
+                    </div>
+                    <div class="col-9 d-flex align-items-center text-nowrap">
+                        <div class="form-check form-switch me-5 w-auto">
+                            <input class="form-check-input" type="checkbox" id="selfAcc" checked>
+                            <label class="form-check-label" for="selfAcc">自喷涂增产剂</label>
+                        </div>
+                        <div class="form-check form-switch me-5 w-auto">
+                            <input class="form-check-input" type="checkbox" id="chemicalDoubl" checked>
+                            <label class="form-check-label" for="chemicalDoubl">化工技术革新（科技翻倍）</label>
+                        </div>
+                        <div class="input-group w-auto">
+                            <span class="input-group-text minspeed text-end">采矿作业速度(%)：</span>
+                            <input type="text" class="form-control text-center" id="selore" value="100" />
+                            <span class="input-group-text">%</span>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="card shadow p-2 mb-2 bg-body-tertiary rounded bg-light text-dark">
+            <form>
+                <div class="row align-items-center">
+                    <div class="col-2 text-center" style="border-right: 1px dashed black;">
+                        <span>其他参数<span class="text-muted">（可选）</span></span>
+                    </div>
+                    <div class="col-8 d-flex">
+                        <div class="btn-group w-auto">
+                            <button type="button" class="btn btn-secondary btn-outline-light text-nowrap"
+                                id="btnSetting">参数设置</button>
+                            <button type="button" class="btn btn-secondary btn-outline-light text-nowrap me-3"
+                                id="btndefaultDevice">更改默认设备</button>
+                        </div>
+                        <div class="btn-group w-auto">
+                            <button type="button" class="btn btn-secondary btn-outline-light text-nowrap"
+                                id="btnReset1">重置为默认参数</button>
+                            <button type="button" class="btn btn-secondary btn-outline-light text-nowrap"
+                                id="btnReset2">重置为默认设备</button>
+                            <button type="button" class="btn btn-secondary btn-outline-light text-nowrap"
+                                id="btnReset3">重置为默认配方</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div id="defaultDevice" style="display:none;">
+                <div class="d-inline-flex">
+                    <select class="form-select changedefultmachine" id="selmodein">
+                        <option value="制造台">制造台</option>
+                        <option value="天穹装配厂">天穹装配厂</option>
+                    </select>
+                </div>
+                <div class="d-inline-flex">
+                    <select class="form-select changedefultmachine" id="circuitEtching">
+                        <option value="电路蚀刻机">电路蚀刻机</option>
+                        <option value="精密结构组装厂">精密结构组装厂</option>
+                    </select>
+                </div>
+                <div class="d-inline-flex">
+                    <select class="form-select changedefultmachine" id="highPrecision">
+                        <option value="高精度装配线">高精度装配线</option>
+                        <option value="精密结构组装厂">精密结构组装厂</option>
+                    </select>
+                </div>
+                <div class="d-inline-flex">
+                    <select class="form-select changedefultmachine" id="furnace">
+                        <option value="电弧熔炉">电弧熔炉</option>
+                        <option value="位面熔炉">位面熔炉</option>
+                        <option value="物质裂解塔">物质裂解塔</option>
+                    </select>
+                </div>
+                <div class="d-inline-flex">
+                    <select class="form-select changedefultmachine" id="mineralProcess">
+                        <option value="矿物处理厂">矿物处理厂</option>
+                        <option value="物质裂解塔">物质裂解塔</option>
+                    </select>
+                </div>
+                <div class="d-inline-flex">
+                    <select class="form-select changedefultmachine" id="pump">
+                        <option value="抽水机">抽水机</option>
+                        <option value="聚束液体汲取设施">聚束液体汲取设施</option>
+                    </select>
+                </div>
+                <br>
+                <div class="d-inline-flex">
+                    <select class="form-select changedefultmachine" id="accelerator">
+                        <option value="微型粒子对撞机">微型粒子对撞机</option>
+                        <option value="巨型粒子对撞机">巨型粒子对撞机</option>
+                    </select>
+                </div>
+                <div class="d-inline-flex">
+                    <select class="form-select changedefultmachine" id="refin">
+                        <option value="精炼厂">精炼厂</option>
+                        <option value="巨型化学反应釜">巨型化学反应釜</option>
+                    </select>
+                </div>
+                <div class="d-inline-flex">
+                    <select class="form-select changedefultmachine" id="chemical">
+                        <option value="化工厂">化工厂</option>
+                        <option value="巨型化学反应釜">巨型化学反应釜</option>
+                    </select>
+                </div>
+                <div class="d-inline-flex">
+                    <select class="form-select changedefultmachine" id="advancchemical">
+                        <option value="先进化学反应釜">先进化学反应釜</option>
+                        <option value="巨型化学反应釜">巨型化学反应釜</option>
+                    </select>
+                </div>
+                <div class="d-inline-flex">
+                    <select class="form-select" id="accValue">
+                        <option value="无">不使用增产剂</option>
+                        <option value="加速">加速</option>
+                        <option value="增产">增产</option>
+                    </select>
+                </div>
+            </div>
+            <div id="MoreSetting" style="display:none;">
+                <p><span class="label">大型采矿机开采速度：</span> <input id="speed1_7" class="textbox" type="number"
+                        value="100" /></p>
+                <p><span class="label">原油速度：</span> <input id="oilSpeed" class="textbox" type="number" value="4" />
+                </p>
+                <p style="display: inline-block; margin-right: 5px;"><span class="label">气态行星参数：</span> </p>
+                <p style="display: inline-block; margin-right: 10px;"><span>氢：</span> <input data-name="氢" id="speed1_1"
+                        class="speed1 textbox" type="number" value="1" /> </p>
+                <p style="display: inline-block; margin-right: 10px;"><span>重氢：</span> <input data-name="重氢"
+                        id="speed1_2" class="speed1 textbox" type="number" value="0.02" /> </p>
+                <p style="display: inline-block; margin-right: 10px;"><span>氦：</span> <input data-name="氦" id="speed1_3"
+                        class="speed1 textbox" type="number" value="0.02" /> </p>
+                <br>
+                <p style="display: inline-block; margin-right: 5px;"><span class="label">冰巨星参数：</span> </p>
+                <p style="display: inline-block; margin-right: 10px;">氢：</span> <input data-name="氢" id="speed2_1"
+                        class="speed1 textbox" type="number" value="0.5" /> </p>
+                <p style="display: inline-block; margin-right: 10px;">可燃冰：</span> <input data-name="可燃冰" id="speed2_2"
+                        class="speed1 textbox" type="number" value="0.5" /> </p>
+                <p style="display: inline-block; margin-right: 10px;">氨：</span> <input data-name="氨" id="speed2_3"
+                        class="speed1 textbox" type="number" value="0.15" /> </p>
+                <br>
+                <p style="display: inline-block; margin-right: 5px;"><span class="label">大气采集站参数：</span> </p>
+                <p style="display: inline-block; margin-right: 10px;">氮：</span> <input data-name="氮" id="speed3_1"
+                        class="speed1 textbox" type="number" value="0.5" /> </p>
+                <p style="display: inline-block; margin-right: 10px;">氧：</span> <input data-name="氧" id="speed3_2"
+                        class="speed1 textbox" type="number" value="0.5" /> </p>
+                <p style="display: inline-block; margin-right: 10px;">一氧化碳：</span> <input data-name="一氧化碳" id="speed3_3"
+                        class="speed1 textbox" type="number" value="0.5" /> </p>
+                <p style="display: inline-block; margin-right: 10px;">二氧化碳：</span> <input data-name="二氧化碳" id="speed3_4"
+                        class="speed1 textbox" type="number" value="0.5" /> </p>
+            </div>
+        </div>
+        <div class="card shadow mb-2 p-2 bg-body-tertiary rounded bg-light text-dark">
+            <form>
+                <div class="row align-items-center">
+                    <div class="col-2 text-center" style="border-right: 1px dashed black;">
+                        <span>已配置完成的方案</span>
+                    </div>
+                    <div class="w-auto d-flex">
+                        <div>
+                            <select class="w-auto form-select me-2" id="selprojects"></select>
+                        </div>
+                        <button type="button" class="btn btn-secondary btn-outline-light me-2"
+                            id="btnLoadProject">加载此方案（并加载参数）</button>
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-secondary btn-outline-light"
+                                id="btnReset4">删除此方案</button>
+                            <button type="button" class="btn btn-secondary btn-outline-light"
+                                id="btnReset5">删除所有方案</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="card mb-2 p-2 bg-body-tertiary rounded text-dark">
+            <div class="card-header">
+                <span class="me-3">计算结果：</span>
+                <div class="progress" style="height:18px;" id="loadProgressBar">
+                    <div class="progress-bar progress-bar-striped progress-bar-animated" style="width:12%">正在加载中：12%
+                    </div>
+                </div>
+            </div>
 
-
-					<tr class="total">
-						<td colspan="3" align="right">合计： </td>
-						<td colspan="5">
-							<span v-for="item in total"> {{item.name}}*{{item.value}} </span>
-							<br />
-							<span title="包含自喷涂所需">总喷涂增产剂数量：{{totalAcc}}</span> <a
-								href="javascript:f_ig_acc()">排除增产剂产线</a><br />
-							<span>占地格子数：{{totalSpace}}</span><br />
-							<span>
-								耗能估算：{{totalEnergy}}M
-							</span>
-						</td>
-					</tr>
-					<tr class="" v-if="items2 && items2.length">
-						<td colspan="8" align="left">多余产物 <br />(负数代表多余、正数代表缺少，如1000则需要额外补齐，-1000则需要额外消耗) </td>
-					</tr>
-					<tr v-for="item in items2" v-bind:class="item.rowClass">
-						<td></td>
-
-						<td>
-							<span class="name">
-								<img v-bind:src="'data:image/png;base64,' + icons[item.name]"
-									style="width:40px;height:40px;" v-if="icons[item.name]" v-bind:title="item.name" />
-								<span class="name" v-else=v-else>{{item.name}}</span>
-							</span>
-						</td>
-						<td><span class="number1">{{item.number1}}</span></td>
-						<td>
-							<span class="number2">{{item.number2}}</span>
-						</td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-
-
-					<tr class="">
-						<td colspan="1" align="right">重要说明 </td>
-						<td colspan="7">
-							<!-- 更新说明开始 -->
-							<div data-include="updata"></div>
-							<!-- 更新说明结束 -->
-						</td>
-					</tr>
-					<tr class="">
-						<td colspan="1" align="right">使用说明 </td>
-						<td colspan="7">
-							<!-- 使用说明开始 -->
-							<div data-include="explanation"></div>
-							<!-- 使用说明结束 -->
-						</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
-	</div>
-	<div style="text-align:center;">
-		<p>
-			<!-- 底部内容开始 -->
-		<div data-include="footer"></div>
-		<!-- 底部内容结束 -->
-		</p>
-		<div>
-			<script>
-				$(function () {
-					var includes = $('[data-include]');
-					jQuery.each(includes, function () {
-						var file = 'quote/' + $(this).data('include') + '.html';
-						$(this).load(file);
-					});
-				});
-			</script>
+            <div class="row card-body align-items-center" id="resultArea">
+                <div class="card p-2 d-inline-flex" id="requireListArea">
+                    <div class="card-header">
+                        <div class="d-inline-flex align-items-center">
+                            <span>需求列表（右键或点击x删除）：</span>
+                            <button type="button" class="btn btn-primary btn-outline-light mx-3"
+                                id="showInputProjectName">保存此方案</button>
+                            <span class="col me-3 form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="hideSource">
+                                <label class="form-check-label" for="hideSource">隐藏原料</label>
+                            </span>
+                            <form class="d-inline-flex align-items-top mx-3">
+                                <div class="row">
+                                    <span>显示小数位数：</span>
+                                </div>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <input type="number" class="form-control form-control-sm" value="1"
+                                            id="decimalDigits" style="margin-top: -5px; padding: 4px 0 0 0;">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div id="requireListShowArea" class="flex-grow-1"></div>
+                </div>
+                <div class="card my-2 p-2 d-inline-flex" id="ignoreListArea">
+                    <div class="card-header">
+                        <span>排除列表（右键或点击x删除）：</span>
+                    </div>
+                    <div id="ignoreListShowArea" class="flex-grow-1"></div>
+                </div>
+                <div class="d-inline-flex text-nowrap col-4 m-2" id="showDeepArea"></div>
+                <div id="resultTreeArea" class="col-12 p-2 card-body"></div>
+                <div id="result" class="col-12 card-body"></div>
+                <div class="card-footer my-2 p-2 d-inline-flex">
+                    <div class="card col-12">
+                        <div class="card-header">
+                            <span>额外输出：</span>
+                        </div>
+                        <div id="outTreeShowArea" class="col-12"></div>
+                        <div id="machineStatisticsArea" class="col-12 card-footer"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <table class="table-pagedown">
+            <tr>
+                <td colspan="1" align="right" class="td-pagedown">重要说明 </td>
+                <td colspan="7" class="td-pagedown">
+                    <div data-include="updata"></div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1" align="right" class="td-pagedown">使用说明 </td>
+                <td colspan="7" class="td-pagedown">
+                    <div data-include="explanation"></div>
+                </td>
+            </tr>
+        </table>
+        <div style="text-align:center;">
+            <p>
+            <div data-include="footer"></div>
+            </p>
+            <div>
+                <script>
+                    $(function () {
+                        var includes = $('[data-include]');
+                        jQuery.each(includes, function () {
+                            var file = '/src/quote/' + $(this).data('include') + '.html';
+                            $(this).load(file);
+                        });
+                    });
+                </script>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

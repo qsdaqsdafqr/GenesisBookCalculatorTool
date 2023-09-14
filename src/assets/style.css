@@ -1,0 +1,175 @@
+.list {
+    border: 1px #d3d3d3 dashed;
+    margin: 10px;
+    padding: 10px;
+}
+
+#MoreSetting {
+    border: 1px #d3d3d3 dashed;
+    margin: 10px;
+    padding: 10px;
+}
+
+#defaultDevice {
+    border: 1px #d3d3d3 dashed;
+    margin: 10px;
+    padding: 10px;
+}
+
+.minspeed {
+    color: red;
+    font-weight: bold;
+}
+
+.btn-my-close {
+    padding: 0rem 0rem;
+    border-width: 0px;
+    line-height: 1;
+}
+
+.Hyperlink {
+    color: #66CCFF;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+.table-pagedown {
+    width: 100%;
+    border-collapse: collapse;
+    border: none;
+}
+
+.td-pagedown {
+    padding: 3px 4px;
+    border: 1px dashed #d3d3d3;
+}
+
+.selector .icons {
+    flex-direction: column;
+    padding: 20px;
+    display: none;
+}
+
+.selector .icons-selected {
+    display: -webkit-flex;
+    display: flex;
+}
+
+.selector .icons .iconrow {
+    display: -webkit-flex;
+    display: flex;
+    flex: auto;
+}
+
+.selector .icons .icon:hover {
+    background: #3F6D84;
+}
+
+.selector .icons .icon {
+    flex: auto;
+    margin-right: 2px;
+    margin-bottom: 2px;
+    cursor: pointer;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+    /* border: 1px solid #ccc;  optional: add border */
+}
+
+.selector .icons .icon .s,
+.selector .icons .icon img {
+    max-width: 100%;
+    max-height: 100%;
+    height: auto;
+    margin: auto;
+    /* center image inside the box */
+}
+
+
+.sicon {
+    width: 24px;
+    height: auto;
+}
+
+.selector,
+.layui-layer-demo {
+    background: #4A5C72;
+}
+
+.icons {
+    background: #2D3241;
+    clear: both;
+    margin-top: 40px;
+    margin-left: 20px;
+}
+
+.icons .icon {
+    background: #364450;
+}
+
+#tabs img {
+    width: 64px;
+    height: 64px;
+}
+
+#tabs .tab {
+    padding: 10px;
+    cursor: pointer;
+    float: left;
+}
+
+#tabs .tab.selected {
+    background: #506777;
+}
+
+#UIselector {
+    position: absolute;
+    left: 50px;
+    top: 50px;
+    z-index: 1000;
+}
+
+.table-result td,
+.table th {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.table-result td a {
+    color: gray;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+sub {
+    bottom: -1em;
+}
+
+.bg-select {
+    --bs-bg-opacity: 1;
+    background-color: #42586c !important
+}
+
+.showDeepPosition {
+    position: relative;
+}
+
+#showDeepTip {
+    position: absolute;
+    bottom: 100%;
+    transform: translateX(-50%);
+    display: none;
+    background-color: #333;
+    color: white;
+    padding: 5px;
+    border-radius: 4px;
+    white-space: nowrap;
+}
+
+input[type=range]:hover + #showDeepTip,
+input[type=range]:focus + #showDeepTip {
+    display: block;
+}
