@@ -511,6 +511,7 @@ function initEventListener() { //初始化事件监听器
                             }
                         }
                     }
+                    reRequire();
                     updateDisplay();
                     return;
                 }
@@ -546,7 +547,7 @@ function initEventListener() { //初始化事件监听器
         projectNew = $.extend(true, {}, projectNew);
         projects.push(projectNew);
         saveData("projects_setting", projects);
-        projectsUpdate();
+        projectsUpdate();//发现还是直接算方便，前面的懒得改了
         $('#inputProjectName').modal('hide');
         toastr.success(`方案${projectNew.name}已保存`);
     });
