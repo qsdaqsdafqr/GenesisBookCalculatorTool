@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 <html lang="zh-cmn-Hans">
+
 <head>
-	<title>戴森球计划创世之书量产量化计算器工具</title>
-	<meta http-equiv="Content-Type" content="text/html" charset="UTF-8"/>
-	<meta name="keywords" content="戴森球计划,创世之书,量产量化工具,量产量化计算器,自动化工具,生产工具"/>
-	<meta name="description" content="《戴森球计划·创世之书》自动化量产计算器，可以全自动计算量产某个产品的具体产能需求。"/>
+    <title>戴森球计划创世之书量产量化计算器工具</title>
+    <meta http-equiv="Content-Type" content="text/html" charset="UTF-8" />
+    <meta name="keywords" content="戴森球计划,创世之书,量产量化工具,量产量化计算器,自动化工具,生产工具" />
+    <meta name="description" content="《戴森球计划·创世之书》自动化量产计算器，可以全自动计算量产某个产品的具体产能需求。" />
     <link rel="shortcut icon" href="./favicon.ico">
-	<script src="https://cdn.staticfile.org/jquery/3.7.1/jquery.min.js"></script>
-	<link href="https://cdn.staticfile.org/bootstrap/5.3.1/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
-	<script src="https://cdn.staticfile.org/bootstrap/5.3.1/js/bootstrap.bundle.js" crossorigin="anonymous"></script>
-	<script src="https://cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
-	<link rel="stylesheet" href="https://cdn.staticfile.org/toastr.js/2.1.4/toastr.min.css">
-	<script src="https://cdn.staticfile.org/toastr.js/2.1.4/toastr.min.js"></script>
-	<script src="./require/jquery.tips.js"></script>
-	<script type="module" src="./src/Scripts/config.js"></script>
-	<script type="module" src="./src/Scripts/data.js"></script>
-	<link rel="stylesheet" href="./src/assets/style.css">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.staticfile.org/jquery/3.7.1/jquery.min.js"></script>
+    <link href="https://cdn.staticfile.org/bootstrap/5.3.1/css/bootstrap.min.css" rel="stylesheet"
+        crossorigin="anonymous">
+    <script src="https://cdn.staticfile.org/bootstrap/5.3.1/js/bootstrap.bundle.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.staticfile.org/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/toastr.js/2.1.4/toastr.min.css">
+    <script src="https://cdn.staticfile.org/toastr.js/2.1.4/toastr.min.js"></script>
+    <script src="./require/jquery.tips.js"></script>
+    <script type="module" src="./src/Scripts/config.js"></script>
+    <script type="module" src="./src/Scripts/data.js"></script>
+    <link rel="stylesheet" href="./src/assets/style.css">
 </head>
 
 <!-- <head>
@@ -39,7 +40,7 @@
 </head> -->
 
 
-<body style="padding:20px;">
+<body style="padding:20px;background-color:#F9F9F9;">
     <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="确认删除？" aria-hidden="true">
         <div class="modal-dialog modal-content">
             <div class="modal-header">
@@ -90,6 +91,8 @@
             </div>
         </div>
     </div>
+
+
     <div class="card shadow mb-2 p-2">
         <div class="card shadow mb-2 p-2 bg-body-tertiary rounded bg-light text-dark">
             <div class="row align-items-center">
